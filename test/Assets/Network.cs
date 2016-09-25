@@ -6,15 +6,11 @@ public class Network : MonoBehaviour {
 
     // 필요에 따라 url을 수정한다.
     string url = "http://localhost/connect.php";
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    public void testLim(int a)
+    {
+        Debug.Log(a);
+    }
 
     public void ConnectServer()
     {
