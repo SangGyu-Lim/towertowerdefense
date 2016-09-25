@@ -5,19 +5,21 @@ using UnityEngine.UI;
 public class Network : MonoBehaviour {
 
     // 필요에 따라 url을 수정한다.
-    string url = "http://localhost/connect.php";
+    string url = "http://192.168.0.116/connect.php";
 
-    public void testLim(int a)
+    public void testLim()
     {
-        Debug.Log(a);
     }
 
-    public void ConnectServer()
+    void ConnectServer()
     {
         // 송신할 데이터 셋팅
         WWWForm sendData = new WWWForm();
         // addfield에서 비교할 키값, 데이터 값 순서.
-        sendData.AddField("characterKey", "1");
+        sendData.AddField("funcName", "testFunction");
+        sendData.AddField("ID", "pjh");
+        sendData.AddField("passWord", "qwe123");
+        
         // 데이터 송신
         WWW www = new WWW(url, sendData);
         StartCoroutine(WaitForRequest(www));
@@ -25,7 +27,7 @@ public class Network : MonoBehaviour {
 
 
     // 테스트 코드
-    public void DisConnectServer()
+    void DisConnectServer()
     {
         Debug.Log("call disconnect server");
     }

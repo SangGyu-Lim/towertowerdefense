@@ -3,16 +3,27 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour {
 
-    //GameObject netManager = GameObject.Find("NetworkManager");
+    public UIInput inputId;
+    public UIInput inputPwd;
 
     public void btnLogin()
     {
         Debug.Log("btn login");
-        //netManager.SendMessage("testLim", 5);
+
+        GameObject netManager = GameObject.Find("NetworkManager");
+
+        netManager.SendMessage("ConnectServer");
+        
+
     }
 
     public void btnJoin()
     {
-        Debug.Log("btn join");
+
+        GameObject netManager = GameObject.Find("NetworkManager");
+
+        netManager.SendMessage("testLim");
+
+        Debug.Log("btn join");       
     }
 }
