@@ -12,7 +12,7 @@ public class Network : MonoBehaviour {
     }
 
     // 필요에 따라 url을 수정한다.
-    string url = "http://localhost/ll.php";
+    string url = "http://192.168.0.116/connect.php";
 
     eNetworkState currentState { get; set; }
     public string id { get; set; }
@@ -29,7 +29,8 @@ public class Network : MonoBehaviour {
         currentState = (eNetworkState)state;
         Debug.LogError((int)currentState);
         // addfield에서 비교할 키값, 데이터 값 순서.
-        sendData.AddField("functionName", (int)currentState );
+        //sendData.AddField("functionName", (int)currentState );
+        sendData.AddField("functionName", (int)currentState);
         sendData.AddField("ID", id);
         sendData.AddField("passWord", passWord);
 
@@ -56,8 +57,7 @@ public class Network : MonoBehaviour {
     private IEnumerator WaitForRequest(WWW www)
     {
         yield return www;
-
-
+               
 
         if (www.error == null)
         {
