@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class UIManager : MonoBehaviour {
@@ -95,5 +96,10 @@ public class UIManager : MonoBehaviour {
 		}
 
         Debug.Log(str + " completion");
+    }
+
+    public void btnNextScene()
+    {
+        SceneManager.LoadScene(1);
     }
 }
