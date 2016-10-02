@@ -10,4 +10,11 @@ public class UILobbyManager : MonoBehaviour {
 
         Debug.Log("btn back");
     }
+
+	public void btnEnterStage()
+	{
+		SceneManager.LoadScene(2);
+
+		Debug.Log("btn enter stage");
+	}
 }
