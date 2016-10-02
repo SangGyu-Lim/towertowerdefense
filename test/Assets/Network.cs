@@ -20,7 +20,7 @@ public class Network : MonoBehaviour {
     // 필요에 따라 url을 수정한다.
     string url = "http://192.168.0.116/connect.php";
 
-    eNetworkState eCurrentState;
+    eNetworkState eCurrentState = eNetworkState.eNONE;
     public int currentState { get { return (int)eCurrentState; } }
     public string id { get; set; }
     public string passWord { get; set; }

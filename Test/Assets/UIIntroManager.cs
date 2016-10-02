@@ -23,17 +23,25 @@ public class UIIntroManager : MonoBehaviour {
 	public UIInput inputPwd;
 	public UIInput inputEmail;
 
-	eState currentState;
-	eState state;
+	eState currentState = eState.eNONE;
+	eState state = eState.eNONE;
 
 	// Use this for initialization
 	void Start () {
 		Debug.Log("start");
+        netManager = GameObject.Find("Network");        
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		Debug.Log("updata");
+
+        state = (eState)netManager.gameObject.GetComponent<Network>().currentState;
+        if (currentState != state)
+        {
+            currentState = state;
+            confirm();
+        }
 	}
 
 	// 로그인
@@ -41,10 +49,9 @@ public class UIIntroManager : MonoBehaviour {
 	{
 		Debug.Log("btn login");
 
-		currentState = eState.eLOGIN;
+        state = eState.eLOGIN;
 
 		connectNetwork();
-		confirm();
 	}
 
 	// 회원가입 화면 이동
@@ -63,11 +70,10 @@ public class UIIntroManager : MonoBehaviour {
 	// 회원가입
 	public void btnJoinMember()
 	{
-		currentState = eState.eJOIN;        
+        state = eState.eJOIN;        
 
 		connectNetwork();
 
-		confirm();
 		Debug.Log("btn join member");
 	}
 
@@ -86,18 +92,14 @@ public class UIIntroManager : MonoBehaviour {
 
 	void connectNetwork()
 	{
-		netManager = GameObject.Find("Network");
-
 		netManager.gameObject.GetComponent<Network>().id = inputId.value.ToString();
 		netManager.gameObject.GetComponent<Network>().passWord = inputPwd.value.ToString();
 
-		if (currentState == eState.eJOIN)
+        if (state == eState.eJOIN)
 			netManager.gameObject.GetComponent<Network>().eMail = inputEmail.value.ToString();
 
-		netManager.SendMessage("ConnectServer", (int)currentState);
-		Debug.LogError("uimanager state : " + currentState);
-		currentState = (eState)netManager.gameObject.GetComponent<Network>().currentState;
-		Debug.LogError("uimanager state : " + currentState);
+        netManager.SendMessage("ConnectServer", (int)state);
+		
 	}
 
 	// 회원가입 화면으로 변경 및 로그인 화면으로 복귀
@@ -126,22 +128,34 @@ public class UIIntroManager : MonoBehaviour {
 	{
 		switch (currentState)
 		{
-		case eState.eSUCCESS_LOGIN:
-			{
-				SceneManager.LoadScene(1);
-			} break;
-		case eState.eERROR_LOGIN:
-			{
-				Debug.LogError("eERROR_LOGIN");
-			} break;
-		case eState.eSUCCESS_JOIN:
-			{
-				btnBack();
-			} break;
-		case eState.eERROR_JOIN:
-			{
-				Debug.LogError("eERROR_JOIN");
-			} break;
+            case eState.eNONE:
+                {
+                    Debug.Log("eNONE");
+                } break;
+            case eState.eJOIN:
+                {
+                    Debug.Log("eJOIN");
+                } break;
+            case eState.eLOGIN:
+                {
+                    Debug.Log("eLOGIN");
+                } break;
+		    case eState.eSUCCESS_LOGIN:
+		    	{
+		    		SceneManager.LoadScene(1);
+		    	} break;
+		    case eState.eERROR_LOGIN:
+		    	{
+		    		Debug.LogError("eERROR_LOGIN");
+		    	} break;
+		    case eState.eSUCCESS_JOIN:
+		    	{
+		    		btnBack();
+		    	} break;
+		    case eState.eERROR_JOIN:
+		    	{
+		    		Debug.LogError("eERROR_JOIN");
+		    	} break;
 		}
 	}
 }
