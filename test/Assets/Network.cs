@@ -20,7 +20,8 @@ public class Network : MonoBehaviour {
     // 필요에 따라 url을 수정한다.
     string url = "http://192.168.0.116/connect.php";
 
-	public int currentState { get; set; }
+    eNetworkState eCurrentState;
+    public int currentState { get { return (int)eCurrentState; } }
     public string id { get; set; }
     public string passWord { get; set; }
     public string eMail { get; set; }
@@ -39,8 +40,8 @@ public class Network : MonoBehaviour {
         sendData.AddField("ID", id);
         sendData.AddField("passWord", passWord);
 
-        
-        if((eNetworkState)currentState == eNetworkState.eJOIN)
+
+        if (eCurrentState == eNetworkState.eJOIN)
             sendData.AddField("eMail", eMail);
 
         Debug.LogError((int)currentState + " / " + id + " / " + passWord + " / " + eMail);
@@ -61,7 +62,7 @@ public class Network : MonoBehaviour {
             Debug.LogError("www success\n");
             Debug.LogError(www.text);
 
-            changeState(int.Parse(www.text));
+            changeState(int.Parse(www.text.ToString()));
 			Debug.LogError(currentState);
             
             //string[] dataTexts = www.text.Split(',');
@@ -83,31 +84,31 @@ public class Network : MonoBehaviour {
         {
             case eNetworkState.eNONE:
                 {
-				    currentState = (int)eNetworkState.eNONE;
+                    eCurrentState = eNetworkState.eNONE;
                 } break;
             case eNetworkState.eJOIN:
                 {
-                    currentState = (int)eNetworkState.eJOIN;
+                    eCurrentState = eNetworkState.eJOIN;
                 } break;
             case eNetworkState.eLOGIN:
                 {
-                    currentState = (int)eNetworkState.eLOGIN;
+                    eCurrentState = eNetworkState.eLOGIN;
                 } break;
             case eNetworkState.eSUCCESS_JOIN:
                 {
-                    currentState = (int)eNetworkState.eSUCCESS_JOIN;
+                    eCurrentState = eNetworkState.eSUCCESS_JOIN;
                 } break;
             case eNetworkState.eSUCCESS_LOGIN:
                 {
-                    currentState = (int)eNetworkState.eSUCCESS_LOGIN;
+                    eCurrentState = eNetworkState.eSUCCESS_LOGIN;
                 } break;
             case eNetworkState.eERROR_JOIN:
                 {
-                    currentState = (int)eNetworkState.eERROR_JOIN;
+                    eCurrentState = eNetworkState.eERROR_JOIN;
                 } break;
             case eNetworkState.eERROR_LOGIN:
                 {
-                    currentState = (int)eNetworkState.eERROR_LOGIN;
+                    eCurrentState = eNetworkState.eERROR_LOGIN;
                 } break;
         }
     }

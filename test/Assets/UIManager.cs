@@ -4,6 +4,16 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour {
 
+    void Start() {
+        Debug.Log("start");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Debug.Log("updata");
+    }
+
     enum eState
     {
         eNONE = 0,
@@ -24,6 +34,9 @@ public class UIManager : MonoBehaviour {
     public UIInput inputEmail;
 
     eState currentState;
+    eState state;
+
+    
 
     // 로그인
     public void btnLogin()
