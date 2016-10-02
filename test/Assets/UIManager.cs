@@ -8,7 +8,13 @@ public class UIManager : MonoBehaviour {
     {
         eNONE = 0,
         eJOIN = 1,
-        eLOGIN = 2
+        eLOGIN = 2,
+
+        eSUCCESS_JOIN = 11,
+        eSUCCESS_LOGIN = 12,
+
+        eERROR_JOIN = 1001,
+        eERROR_LOGIN = 1002
     }
 
     GameObject netManager;
@@ -19,8 +25,7 @@ public class UIManager : MonoBehaviour {
 
     eState currentState;
 
-
-
+    // 로그인
     public void btnLogin()
     {
         Debug.Log("btn login");
@@ -28,9 +33,10 @@ public class UIManager : MonoBehaviour {
         currentState = eState.eLOGIN;
 
         connectNetwork();
-
+        confirm();
     }
 
+    // 회원가입 화면 이동
     public void btnJoin()
     {
         changeActiveGameObject("ButtonJoin", false);
@@ -43,16 +49,18 @@ public class UIManager : MonoBehaviour {
         Debug.Log("btn join");
     }
 
+    // 회원가입
     public void btnJoinMember()
     {
         currentState = eState.eJOIN;        
 
         connectNetwork();
 
-        btnBack();
+        confirm();
         Debug.Log("btn join member");
     }
 
+    // 회원가입 화면에서 뒤로가기
     public void btnBack()
     {
         changeActiveGameObject("ButtonJoin", true);
@@ -76,8 +84,12 @@ public class UIManager : MonoBehaviour {
             netManager.gameObject.GetComponent<Network>().eMail = inputEmail.value.ToString();
 
         netManager.SendMessage("ConnectServer", (int)currentState);
+        Debug.LogError("uimanager state : " + currentState);
+        currentState = (eState)netManager.gameObject.GetComponent<Network>().currentState;
+        Debug.LogError("uimanager state : " + currentState);
     }
 
+    // 회원가입 화면으로 변경 및 로그인 화면으로 복귀
     void changeActiveGameObject(string str, bool state)
     {
         Debug.Log(str + state);
@@ -98,8 +110,27 @@ public class UIManager : MonoBehaviour {
         Debug.Log(str + " completion");
     }
 
-    public void btnNextScene()
+    // 로그인 및 회원가입 확인
+    void confirm()
     {
-        SceneManager.LoadScene(1);
+        switch (currentState)
+        {
+            case eState.eSUCCESS_LOGIN:
+                {
+                    SceneManager.LoadScene(1);
+                } break;
+            case eState.eERROR_LOGIN:
+                {
+                    Debug.LogError("eERROR_LOGIN");
+                } break;
+            case eState.eSUCCESS_JOIN:
+                {
+                    btnBack();
+                } break;
+            case eState.eERROR_JOIN:
+                {
+                    Debug.LogError("eERROR_JOIN");
+                } break;
+        }
     }
 }
