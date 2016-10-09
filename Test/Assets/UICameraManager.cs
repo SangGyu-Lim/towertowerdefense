@@ -42,7 +42,7 @@ public class UICameraManager : MonoBehaviour {
         if (dragOrigin.y <= bottomMargin) return;
 
         Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-        Vector3 move = new Vector3(-pos.x * dragSpeed, 0, -pos.y * dragSpeed);
+        Vector3 move = new Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
 
         if (move.x > 0)
         {
