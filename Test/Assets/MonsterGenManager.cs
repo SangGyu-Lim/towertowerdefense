@@ -7,7 +7,7 @@ public class MonsterGenManager : MonoBehaviour {
     public Transform[] points;
     public GameObject monster;
     // 3초마다 몬스터를 만든다.
-    public float createTime = 3.0f;
+    public float createTime = 1.0f;
 
 	// Use this for initialization
 	void Start () {
