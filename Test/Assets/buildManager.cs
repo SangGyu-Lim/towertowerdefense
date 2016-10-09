@@ -3,20 +3,6 @@ using System.Collections;
 
 public class buildManager : MonoBehaviour {
 
-<<<<<<< HEAD
-    public Ray ray;
-    public RaycastHit hitInfo;
-
-	// Use this for initialization
-	void Start () {
-
-        Debug.Log("test");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-=======
     Ray ray;
     RaycastHit hitInfo;
 
@@ -52,21 +38,16 @@ public class buildManager : MonoBehaviour {
 
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
->>>>>>> dev
         if (Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(ray, out hitInfo))
             {
-<<<<<<< HEAD
-                Debug.Log(hitInfo.transform.gameObject.name); //gameObject name
-=======
                 Debug.Log(hitInfo.transform.gameObject.name);
                 if (hitInfo.transform.gameObject.name == "box")
                     goTowerPanel.SetActive(true);
                 
                 
                 //Debug.Log();
->>>>>>> dev
             }
         }
 	}
