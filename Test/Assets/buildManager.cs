@@ -120,6 +120,10 @@ public class buildManager : MonoBehaviour {
                     //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
 
 					temp = Instantiate(Resources.Load("Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
+                    temp.transform.parent = this.transform;
+                    temp.transform.localScale = new Vector3(5, 5, 5);
+                    temp.transform.position = Vector3.zero;
+                    temp.transform.localPosition = Vector3.zero;
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER4:
