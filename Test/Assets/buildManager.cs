@@ -6,7 +6,8 @@ public class buildManager : MonoBehaviour {
     Ray ray;
     RaycastHit hitInfo;
 
-    public GameObject goTowerPanel;
+    public bool isTouch = false;
+    public GameObject goStageManager;
 
     /* test
     public int count;
@@ -35,7 +36,8 @@ public class buildManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+        
+        // 터치 입력
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Input.GetMouseButtonDown(0))
@@ -44,12 +46,19 @@ public class buildManager : MonoBehaviour {
             {
                 Debug.Log(hitInfo.transform.gameObject.name);
                 if (hitInfo.transform.gameObject.name == "box")
-                    goTowerPanel.SetActive(true);
+                {
+                    isTouch = true;
+                    goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
+                }
                 
                 
                 //Debug.Log();
             }
         }
+        
+        // 상태 체크
+        checkState();
+         
 	}
 
 
@@ -78,4 +87,46 @@ public class buildManager : MonoBehaviour {
         }
     }
     */
+
+    void checkState()
+    {
+        switch (goStageManager.GetComponent<UIStageManager>().state)
+        {
+            case UIStageManager.eStageState.eNONE:
+                {
+                } break;
+
+            case UIStageManager.eStageState.eTOWERPANEL_FALSE:
+                {
+                    goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
+                    
+                } break;
+
+            case UIStageManager.eStageState.eBUILD_TOWER0:
+                {
+                } break;
+
+            case UIStageManager.eStageState.eBUILD_TOWER1:
+                {
+                } break;
+
+            case UIStageManager.eStageState.eBUILD_TOWER2:
+                {
+                } break;
+
+            case UIStageManager.eStageState.eBUILD_TOWER3:
+                {
+                } break;
+
+            case UIStageManager.eStageState.eBUILD_TOWER4:
+                {
+                } break;
+
+            case UIStageManager.eStageState.eBUILD_TOWER5:
+                {
+                } break;
+        }
+
+        goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eNONE;
+    }
 }
