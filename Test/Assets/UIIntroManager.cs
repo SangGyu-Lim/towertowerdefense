@@ -28,7 +28,7 @@ public class UIIntroManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		Debug.Log("start");
+		Debug.Log("intro start");
         netManager = GameObject.Find("Network");      
         
 	}
