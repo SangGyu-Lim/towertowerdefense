@@ -25,7 +25,8 @@ public class Monster : MonoBehaviour {
     private STATE currentMonsterMoveState;
     public GameObject[] arrayObject = new GameObject[16];
     float speed = 5.0f;
-    
+	public int monsterHp { get; set; }
+
 	// Use this for initialization
 	void Start () {
         currentMonsterMoveState = STATE.POINT1;

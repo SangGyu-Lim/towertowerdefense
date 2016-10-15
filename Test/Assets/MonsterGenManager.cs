@@ -23,12 +23,14 @@ public class MonsterGenManager : MonoBehaviour {
 		eEND = 11
 	}
     // 3초마다 몬스터를 만든다.
-	private float createTime = 3.0f;
-	const int maxMonsterNum = 80;   // 누적 최대 몬스터수
-	const int maxWaveMonsterNum = 10;   //  웨이브 최대 몬스터수
+	private float createTime = 0.5f;
+	const int maxMonsterNum = 200;   // 누적 최대 몬스터수
+	const int maxWaveMonsterNum = 5;   //  웨이브 최대 몬스터수
 	private int currentWaveMonsterNum = 0;  // 현재 웨이브 몬스터 생성수
 	private int currentMonsterNum = 0;  //  누적 몬스터 생성수
 	private EWave currentWave = EWave.eNONE;
+	private float fDestroyTime = 1.0f;
+	private float fTickTime = 1.0f;
 
 
 	// Use this for initialization
@@ -40,8 +42,10 @@ public class MonsterGenManager : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
-        if(true /* delta time 돌릴것*/)
+	void Update () 
+	{
+		fTickTime += Time.deltaTime;
+		if( fTickTime >= fDestroyTime )
         {
 		    if (currentMonsterNum < maxMonsterNum) 
 		    {
@@ -55,16 +59,18 @@ public class MonsterGenManager : MonoBehaviour {
 		    }
 		    else
 			    Debug.Log ("GameOver");
+
+			fTickTime = 0.0f;
         }
 	}
 
-	IEnumerator CreateMonster( EWave state)
+	IEnumerator CreateMonster( EWave state, int hp )
 	{
 		// 계속해서 createTime동안 monster생성
         int idx = Random.Range(1, points.Length);
         int index = (int)state;
         Instantiate(monster[index - 1], points[idx - 1].position, Quaternion.identity);
-        //currentWaveMonsterNum++;
+		monster [index - 1].GetComponent<Monster> ().monsterHp = hp;
         yield return new WaitForSeconds(createTime);
 		Debug.Log (currentMonsterNum);	
 	}
@@ -73,63 +79,55 @@ public class MonsterGenManager : MonoBehaviour {
 	{
 		switch(currentWave)
 		{
-		case EWave.eWAVE1:
-			StartCoroutine (CreateMonster (EWave.eWAVE1));
-            changeMonseterCount(true, 1);
-            changeMonseterCount(false, 1);
-           
+			case EWave.eWAVE1:
+				StartCoroutine (CreateMonster (EWave.eWAVE1, 50 ));
+            	changeMonseterCount(true, 1);
+            	changeMonseterCount(false, 1);
 				break;
 			case EWave.eWAVE2:
-			StartCoroutine (CreateMonster ( EWave.eWAVE2 ));
-			changeMonseterCount(true, 1);
-            changeMonseterCount(false, 1);
-           
+				StartCoroutine (CreateMonster ( EWave.eWAVE2, 100 ));
+				changeMonseterCount(true, 1);
+            	changeMonseterCount(false, 1);
 				break;
 			case EWave.eWAVE3:
-			StartCoroutine (CreateMonster ( EWave.eWAVE3 ));
-			changeMonseterCount(true, 1);
-            changeMonseterCount(false, 1);
+				StartCoroutine (CreateMonster ( EWave.eWAVE3, 150 ));
+				changeMonseterCount(true, 1);
+            	changeMonseterCount(false, 1);
 				break;
 			case EWave.eWAVE4:
-			StartCoroutine (CreateMonster ( EWave.eWAVE4 ));
-			changeMonseterCount(true, 1);
-            changeMonseterCount(false, 1);
+				StartCoroutine (CreateMonster ( EWave.eWAVE4, 200 ));
+				changeMonseterCount(true, 1);
+           	 	changeMonseterCount(false, 1);
 				break;
-			//case EWave.eWAVE5:
-			//StartCoroutine (this.CreateMonster ( EWave.eWAVE5 ));
-			//currentMonsterNum += currentWaveMonsterNum;
-			//currentWaveMonsterNum = 0;
-			//currentWave = EWave.eWAVE6;
-			//	break;
-			//case EWave.eWAVE6:
-			//StartCoroutine (this.CreateMonster ( EWave.eWAVE6 ));
-			//currentMonsterNum += currentWaveMonsterNum;
-			//currentWaveMonsterNum = 0;
-			//currentWave = EWave.eWAVE7;
-			//	break;
-			//case EWave.eWAVE7:
-			//StartCoroutine (this.CreateMonster ( EWave.eWAVE7 ));
-			//currentMonsterNum += currentWaveMonsterNum;
-			//currentWaveMonsterNum = 0;
-			//currentWave = EWave.eWAVE8;
-			//	break;
-			//case EWave.eWAVE8:
-			//StartCoroutine (this.CreateMonster ( EWave.eWAVE8 ));
-			//currentMonsterNum += currentWaveMonsterNum;
-			//currentWaveMonsterNum = 0;
-			//currentWave = EWave.eWAVE9;
-			//	break;
-			//case EWave.eWAVE9:
-			//StartCoroutine (this.CreateMonster ( EWave.eWAVE9 ));
-			//currentMonsterNum += currentWaveMonsterNum;
-			//currentWaveMonsterNum = 0;
-			//currentWave = EWave.eWAVE10;
-			//	break;
+			case EWave.eWAVE5:
+				StartCoroutine (CreateMonster ( EWave.eWAVE5, 250 ));
+				changeMonseterCount(true, 1);
+				changeMonseterCount(false, 1);
+				break;
+			case EWave.eWAVE6:
+				StartCoroutine (CreateMonster ( EWave.eWAVE6, 300 ));
+				changeMonseterCount(true, 1);
+				changeMonseterCount(false, 1);
+				break;
+			case EWave.eWAVE7:
+				StartCoroutine (CreateMonster ( EWave.eWAVE7, 350 ));
+				changeMonseterCount(true, 1);
+				changeMonseterCount(false, 1);
+				break;
+			case EWave.eWAVE8:
+				StartCoroutine (CreateMonster ( EWave.eWAVE8, 400 ));
+				changeMonseterCount(true, 1);
+				changeMonseterCount(false, 1);
+				break;
+			case EWave.eWAVE9:
+				StartCoroutine (CreateMonster ( EWave.eWAVE9, 450 ));
+				changeMonseterCount(true, 1);
+				changeMonseterCount(false, 1);
+				break;
 			//case EWave.eWAVE10:
-			//StartCoroutine (this.CreateMonster ( EWave.eWAVE10 ));
-			//currentMonsterNum += currentWaveMonsterNum;
-			//currentWaveMonsterNum = 0;
-			//currentWave = EWave.eEND;
+			//	StartCoroutine (CreateMonster ( EWave.eWAVE10 ));
+			//	changeMonseterCount(true, 1);
+			//	changeMonseterCount(false, 1);
 			//	break;
 		}
 	}
@@ -162,7 +160,21 @@ public class MonsterGenManager : MonoBehaviour {
             case EWave.eWAVE4:
                     currentWave = EWave.eWAVE5;
                 break;
-            
+			case EWave.eWAVE5:
+				currentWave = EWave.eWAVE6;
+				break;
+			case EWave.eWAVE6:
+				currentWave = EWave.eWAVE7;
+				break;
+			case EWave.eWAVE7:
+				currentWave = EWave.eWAVE8;
+				break;
+			case EWave.eWAVE9:
+				currentWave = EWave.eWAVE9;
+				break;
+			//case EWave.eWAVE9:
+			//	currentWave = EWave.eWAVE10;
+			//	break;            
         }
     }
 }
