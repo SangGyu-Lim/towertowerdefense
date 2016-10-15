@@ -25,7 +25,13 @@ public class Network : MonoBehaviour {
     public string id { get; set; }
     public string passWord { get; set; }
     public string eMail { get; set; }
-        
+
+    void Awake()
+    {
+        Debug.Log("network awake");
+        DontDestroyOnLoad(this);
+    }
+
     void ConnectServer(int state)
     {
         // 송신할 데이터 셋팅

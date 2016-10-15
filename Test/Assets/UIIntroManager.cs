@@ -29,7 +29,8 @@ public class UIIntroManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		Debug.Log("start");
-        netManager = GameObject.Find("Network");        
+        netManager = GameObject.Find("Network");      
+        
 	}
 	
 	// Update is called once per frame
@@ -64,6 +65,8 @@ public class UIIntroManager : MonoBehaviour {
 		changeActiveGameObject("ButtonJoinMember", true);
 		changeActiveGameObject("ButtonBack", true);
 
+        inputUIReset();
+
 		Debug.Log("btn join");
 	}
 
@@ -83,6 +86,8 @@ public class UIIntroManager : MonoBehaviour {
 		changeActiveGameObject("ButtonJoin", true);
 		changeActiveGameObject("ButtonLogin", true);
 
+        inputUIReset();
+
 		inputEmail.gameObject.SetActive(false);
 		changeActiveGameObject("ButtonJoinMember", false);
 		changeActiveGameObject("ButtonBack", false);
@@ -98,6 +103,7 @@ public class UIIntroManager : MonoBehaviour {
         if (state == eState.eJOIN)
 			netManager.gameObject.GetComponent<Network>().eMail = inputEmail.value.ToString();
 
+        inputUIReset();
         netManager.SendMessage("ConnectServer", (int)state);
 		
 	}
@@ -158,4 +164,11 @@ public class UIIntroManager : MonoBehaviour {
 		    	} break;
 		}
 	}
+
+    void inputUIReset()
+    {
+        inputId.value = "";
+        inputPwd.value = "";
+        inputEmail.value = "";
+    }
 }
