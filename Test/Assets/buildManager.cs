@@ -57,7 +57,8 @@ public class buildManager : MonoBehaviour {
         }
         
         // 상태 체크
-        checkState();
+        if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
+            checkState();
          
 	}
 
@@ -92,10 +93,6 @@ public class buildManager : MonoBehaviour {
     {
         switch (goStageManager.GetComponent<UIStageManager>().state)
         {
-            case UIStageManager.eStageState.eNONE:
-                {
-                } break;
-
             case UIStageManager.eStageState.eTOWERPANEL_FALSE:
                 {
                     goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
@@ -116,6 +113,13 @@ public class buildManager : MonoBehaviour {
 
             case UIStageManager.eStageState.eBUILD_TOWER3:
                 {
+                    GameObject temp;
+                    temp = this.transform.FindChild("tower").gameObject;
+                    //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
+                    //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
+                    //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
+
+					temp = Instantiate(Resources.Load("Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER4:
