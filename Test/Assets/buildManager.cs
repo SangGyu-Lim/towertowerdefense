@@ -8,6 +8,18 @@ public class buildManager : MonoBehaviour {
 
     public bool isTouch = false;
     public GameObject goStageManager;
+    GameObject goBuildObject;
+
+    const int towerSize = 2;
+
+    struct sTower
+    {
+        public string name;
+        public int atk;
+        public float range;
+    }
+
+    sTower[] towerInfo;
 
     /* test
     public int count;
@@ -22,7 +34,18 @@ public class buildManager : MonoBehaviour {
     int posX = 100;
     int posZ = 100;
     */
-    
+
+    void Awake()
+    {
+        Debug.Log("buildManager awake");
+        
+        fileLoad();
+
+        //towerInfo = new sTower[5];
+
+        
+
+    }
 	// Use this for initialization
 	void Start () {
         Debug.Log("buildManager start");
@@ -45,12 +68,25 @@ public class buildManager : MonoBehaviour {
             if (Physics.Raycast(ray, out hitInfo))
             {
                 Debug.Log(hitInfo.transform.gameObject.name);
-                if (hitInfo.transform.gameObject.name == "box")
+
+                string[] dataTexts = hitInfo.transform.gameObject.name.Split('_');
+
+                Debug.Log(dataTexts.Length);
+                Debug.Log("datatexts 0" + dataTexts[0]);
+                Debug.Log("datatexts 1" + dataTexts[1]);
+
+                foreach (string dataText in dataTexts)
                 {
-                    isTouch = true;
-                    goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
-                }
-                
+                    Debug.Log(dataText);
+
+                    if (dataText == "box")
+                    {
+                        isTouch = true;
+                        goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
+                        goBuildObject = GameObject.Find(hitInfo.transform.gameObject.name);
+                        break;
+                    }
+                }           
                 
                 //Debug.Log();
             }
@@ -93,18 +129,17 @@ public class buildManager : MonoBehaviour {
     {
         switch (goStageManager.GetComponent<UIStageManager>().state)
         {
-            case UIStageManager.eStageState.eTOWERPANEL_FALSE:
-                {
-                    goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
-                    
-                } break;
+            
 
             case UIStageManager.eStageState.eBUILD_TOWER0:
                 {
+                    
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER1:
                 {
+                    buildTower("knight");
+                    
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER2:
@@ -113,17 +148,7 @@ public class buildManager : MonoBehaviour {
 
             case UIStageManager.eStageState.eBUILD_TOWER3:
                 {
-                    GameObject temp;
-                    temp = this.transform.FindChild("tower").gameObject;
-                    //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
-                    //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
-                    //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
-
-					temp = Instantiate(Resources.Load("Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
-                    temp.transform.parent = this.transform;
-                    temp.transform.localScale = new Vector3(5, 5, 5);
-                    temp.transform.position = Vector3.zero;
-                    temp.transform.localPosition = Vector3.zero;
+                    buildTower("king");
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER4:
@@ -132,9 +157,37 @@ public class buildManager : MonoBehaviour {
 
             case UIStageManager.eStageState.eBUILD_TOWER5:
                 {
+                    buildTower("nurse");
+                    
                 } break;
         }
 
+        goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eNONE;
     }
+
+    void buildTower(string towerName)
+    {
+        GameObject temp;
+        temp = goBuildObject.transform.FindChild("tower").gameObject;
+        //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
+        //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
+        //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
+
+        temp = Instantiate(Resources.Load("Hero/" + towerName), Vector3.zero, Quaternion.identity) as GameObject;
+        temp.transform.parent = goBuildObject.transform;
+        temp.transform.localScale = new Vector3(towerSize, towerSize, towerSize);
+        temp.transform.position = Vector3.zero;
+        temp.transform.localPosition = Vector3.zero;
+    }
+
+    void destroyTower()
+    {
+    }
+
+    void fileLoad()
+    {
+    }
+
+
 }

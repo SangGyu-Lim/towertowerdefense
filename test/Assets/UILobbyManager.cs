@@ -7,7 +7,7 @@ public class UILobbyManager : MonoBehaviour {
     GameObject netManager;
 
     public UILabel labelId;
-    public UILabel labelBestScore;
+    public UILabel labelBestScore;    
 
     void Start()
     {

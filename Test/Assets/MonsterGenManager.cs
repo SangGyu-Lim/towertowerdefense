@@ -47,6 +47,8 @@ public class MonsterGenManager : MonoBehaviour {
 		fTickTime += Time.deltaTime;
 		if( fTickTime >= fDestroyTime )
         {
+            fTickTime = 0.0f;
+
 		    if (currentMonsterNum < maxMonsterNum) 
 		    {
                 if (currentWaveMonsterNum == maxWaveMonsterNum)
@@ -58,9 +60,7 @@ public class MonsterGenManager : MonoBehaviour {
 			    generateMonster ();
 		    }
 		    else
-			    Debug.Log ("GameOver");
-
-			fTickTime = 0.0f;
+			    Debug.Log ("GameOver");            			
         }
 	}
 
@@ -72,7 +72,7 @@ public class MonsterGenManager : MonoBehaviour {
         Instantiate(monster[index - 1], points[idx - 1].position, Quaternion.identity);
 		monster [index - 1].GetComponent<Monster> ().monsterHp = hp;
         yield return new WaitForSeconds(createTime);
-		Debug.Log (currentMonsterNum);	
+		//Debug.Log (currentMonsterNum);	
 	}
 
 	void generateMonster()
@@ -134,14 +134,14 @@ public class MonsterGenManager : MonoBehaviour {
 
     void changeMonseterCount(bool isWave, int changeValue)
     {
-        Debug.Log(currentWaveMonsterNum + " / " + currentMonsterNum);
+        //Debug.Log(currentWaveMonsterNum + " / " + currentMonsterNum);
 
         if (isWave)
             currentWaveMonsterNum += changeValue;
         else
             currentMonsterNum += changeValue;
 
-        Debug.Log(currentWaveMonsterNum + " / " + currentMonsterNum);
+        //Debug.Log(currentWaveMonsterNum + " / " + currentMonsterNum);
     }
 
     void changeState()
@@ -176,5 +176,7 @@ public class MonsterGenManager : MonoBehaviour {
 			//	currentWave = EWave.eWAVE10;
 			//	break;            
         }
+
+        fTickTime = -3.0f;
     }
 }
