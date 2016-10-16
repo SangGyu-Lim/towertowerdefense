@@ -9,7 +9,7 @@ public class buildManager : MonoBehaviour {
     public bool[] isBuild;
 
     public GameObject goStageManager;
-    GameObject goBuildObject;
+    GameObject goTargetObject;
 
     const int towerSize = 2;
     const int boxCount = 3;
@@ -80,9 +80,15 @@ public class buildManager : MonoBehaviour {
 
                     if (dataText == "box")
                     {
-                        isBuild[int.Parse(dataTexts[2])] = true;
+                        isBuild[int.Parse(dataTexts[1])] = true;
                         goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
-                        goBuildObject = GameObject.Find(hitInfo.transform.gameObject.name);
+                        goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
+                        break;
+                    }
+                    else if (dataText == "clone")
+                    {
+                        goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
+                        goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
                         break;
                     }
                 }           
@@ -165,10 +171,11 @@ public class buildManager : MonoBehaviour {
             case UIStageManager.eStageState.eDESTROY_TOWER:
                 {
                     destroyTower();
-
+                    
                 } break;
         }
 
+        goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eNONE;
     }
@@ -176,20 +183,24 @@ public class buildManager : MonoBehaviour {
     void buildTower(string towerName)
     {
         GameObject temp;
-        temp = goBuildObject.transform.FindChild("tower").gameObject;
+        temp = goTargetObject.transform.FindChild("tower").gameObject;
         //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
         //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
         //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
 
         temp = Instantiate(Resources.Load("Hero/" + towerName), Vector3.zero, Quaternion.identity) as GameObject;
-        temp.transform.parent = goBuildObject.transform;
+        temp.transform.parent = goTargetObject.transform;
         temp.transform.localScale = new Vector3(towerSize, towerSize, towerSize);
         temp.transform.position = Vector3.zero;
         temp.transform.localPosition = Vector3.zero;
+        temp.name = "clone_" + towerName;
     }
 
     void destroyTower()
     {
+        GameObject temp;
+        temp = goTargetObject;
+        Destroy(temp);
     }
 
     void initValue()
