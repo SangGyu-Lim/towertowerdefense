@@ -24,30 +24,49 @@ public class Monster : MonoBehaviour {
     }
     private STATE currentMonsterMoveState;
     public GameObject[] arrayObject = new GameObject[16];
-    float speed = 5.0f;
+    float speed = 3.0f;
+	float rotSpeed = 350.0f;
 	public int monsterHp { get; set; }
-	public enum monsterState{
-		IDLE = 0,
-		RUN,
-		DEAD
-	}
+	Animator anim;
+	//public enum monsterState{
+	//	IDLE = 0,
+	//	RUN,
+	//	DEAD
+	//}
 
-	public Animator animController;
-	public monsterState currentmonsterAnimState = monsterState.IDLE;
+	//public monsterState currentmonsterAnimState = monsterState.IDLE;
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
         currentMonsterMoveState = STATE.POINT1;
-		currentmonsterAnimState = monsterState.RUN;
+		anim = this.gameObject.GetComponent<Animator>();
+
+		//if (monsterHp <= 0)
+			
+		//anim.Play ("Base Layer.");
+		//anim.SetTrigger ("die3");
+		//animController = GetComponent<this.ani>;
+		//currentmonsterAnimState = monsterState.RUN;
 	}
 	
 	// Update is called once per frame
 	void Update () 
-    {
-       transform.position = Vector3.MoveTowards(transform.position, arrayObject[(int)currentMonsterMoveState].transform.position, speed * Time.deltaTime);
-		if (animController != null)
-			animController.SetInteger ("monsterState", (int)currentmonsterAnimState);
-       UpdateState();
+	{
+		checkIsDead ();
+		Vector3 moveDir = new Vector3 (arrayObject [(int)currentMonsterMoveState].transform.position.x, arrayObject [(int)currentMonsterMoveState].transform.position.y);
+       	transform.position = Vector3.MoveTowards(transform.position, arrayObject[(int)currentMonsterMoveState].transform.position, speed * Time.deltaTime);
+
+		if (currentMonsterMoveState > STATE.POINT1) 
+		{
+			Vector3 dir = arrayObject [(int)currentMonsterMoveState].transform.position - transform.position;
+			Vector3 dirXZ = new Vector3 (dir.x, 0.0f, dir.y);
+			Quaternion targetRot = Quaternion.LookRotation (dirXZ);
+			Quaternion monsterRot = Quaternion.RotateTowards (transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+			transform.rotation = monsterRot;
+		}
+
+       	UpdateState();
 	}
 
     void UpdateState()
@@ -85,4 +104,11 @@ public class Monster : MonoBehaviour {
         if (transform.position.x == arrayObject[15].transform.position.x && transform.position.z == arrayObject[15].transform.position.z)
             currentMonsterMoveState = STATE.POINT1;
     }
+
+	IEnumerator checkIsDead()
+	{
+		anim.Play ("die3");
+
+		yield return new WaitForSeconds(100.0f);
+	}
 }
