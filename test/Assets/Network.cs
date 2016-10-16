@@ -10,14 +10,17 @@ public class Network : MonoBehaviour {
         eJOIN = 1,
         eLOGIN = 2,
         eLOBBY_INFORMATION = 3,
+        eFIND_MEMBER = 4,
 
         eSUCCESS_JOIN = 11,
         eSUCCESS_LOGIN = 12,
         eSUCCESS_LOBBY_INFORMATION = 13,
+        eSUCCESS_FIND_MEMBER = 14,
 
         eERROR_JOIN = 1001,
         eERROR_LOGIN = 1002,
-        eERROR_LOBBY_INFORMATION = 1003
+        eERROR_LOBBY_INFORMATION = 1003,
+        eERROR_FIND_MEMBER = 1004
     }
 
     // 필요에 따라 url을 수정한다.
@@ -82,6 +85,26 @@ public class Network : MonoBehaviour {
         StartCoroutine(WaitForLobby(www));
     }
 
+    void getMemberInformation(int state)
+    {
+        // 송신할 데이터 셋팅
+        WWWForm sendData = new WWWForm();
+
+        Debug.LogError(state);
+
+        changeState(state);
+        Debug.LogError(currentState);
+        // addfield에서 비교할 키값, 데이터 값 순서.
+        sendData.AddField("functionName", currentState);
+        sendData.AddField("eMail", eMail);
+
+        Debug.LogError((int)currentState + " / " + id);
+
+        // 데이터 송신
+        WWW www = new WWW(url, sendData);
+        StartCoroutine(WaitForFindMember(www));
+    }
+
     // coroutine 및 출력, 로그인, 회원가입.
     private IEnumerator WaitForRequest(WWW www)
     {
@@ -138,6 +161,26 @@ public class Network : MonoBehaviour {
         }
     }
 
+    // 아이디, 비밀번호 찾기
+    private IEnumerator WaitForFindMember(WWW www)
+    {
+        yield return www;
+
+        if (www.error == null)
+        {
+            string[] dataTexts = www.text.Split('/');
+
+            changeState(int.Parse(dataTexts[0]));
+            id = dataTexts[1];
+            passWord = dataTexts[2];
+
+        }
+        else
+        {
+            Debug.LogError("www error : " + www.error);
+        }
+    }
+
     void changeState(int state)
     {
         switch((eNetworkState)state)
@@ -160,6 +203,10 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eLOBBY_INFORMATION;
                 } break;
+            case eNetworkState.eFIND_MEMBER:
+                {
+                    eCurrentState = eNetworkState.eFIND_MEMBER;
+                } break;
 
 
             case eNetworkState.eSUCCESS_JOIN:
@@ -174,6 +221,10 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eSUCCESS_LOBBY_INFORMATION;
                 } break;
+            case eNetworkState.eSUCCESS_FIND_MEMBER:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_FIND_MEMBER;
+                } break;
 
 
             case eNetworkState.eERROR_JOIN:
@@ -187,6 +238,10 @@ public class Network : MonoBehaviour {
             case eNetworkState.eERROR_LOBBY_INFORMATION:
                 {
                     eCurrentState = eNetworkState.eERROR_LOBBY_INFORMATION;
+                } break;
+            case eNetworkState.eERROR_FIND_MEMBER:
+                {
+                    eCurrentState = eNetworkState.eERROR_FIND_MEMBER;
                 } break;
         }
     }

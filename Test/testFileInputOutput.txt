@@ -1,0 +1,5 @@
+3
+king	123	5
+knight	456	7
+nurse	9874	1
+
