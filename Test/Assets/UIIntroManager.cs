@@ -9,12 +9,15 @@ public class UIIntroManager : MonoBehaviour {
 		eNONE = 0,
 		eJOIN = 1,
 		eLOGIN = 2,
+        eFIND_MEMBER = 4,
 
 		eSUCCESS_JOIN = 11,
 		eSUCCESS_LOGIN = 12,
+        eSUCCESS_FIND_MEMBER = 14,
 
 		eERROR_JOIN = 1001,
-		eERROR_LOGIN = 1002
+		eERROR_LOGIN = 1002,
+        eERROR_FIND_MEMBER = 1004
 	}
 
 	GameObject netManager;
@@ -23,8 +26,13 @@ public class UIIntroManager : MonoBehaviour {
 	public UIInput inputPwd;
 	public UIInput inputEmail;
 
+    public UILabel labelId;
+    public UILabel labelPassword;
+
     eIntroState currentState = eIntroState.eNONE;
     eIntroState state = eIntroState.eNONE;
+
+    const string notFind = "not exist or information incorrect";
 
 	// Use this for initialization
 	void Start () {
@@ -51,6 +59,7 @@ public class UIIntroManager : MonoBehaviour {
 		Debug.Log("btn login");
 
         state = eIntroState.eLOGIN;
+        currentState = eIntroState.eLOGIN;
 
 		connectNetwork();
 	}
@@ -73,7 +82,8 @@ public class UIIntroManager : MonoBehaviour {
 	// 회원가입
 	public void btnJoinMember()
 	{
-        state = eIntroState.eJOIN;        
+        state = eIntroState.eJOIN;
+        currentState = eIntroState.eJOIN;    
 
 		connectNetwork();
 
@@ -94,6 +104,59 @@ public class UIIntroManager : MonoBehaviour {
 
 		Debug.Log("btn back");
 	}
+
+    public void btnFind()
+    {
+        changeActiveGameObject("ButtonJoin", false);
+        changeActiveGameObject("ButtonLogin", false);
+
+        inputUIReset();
+
+        inputId.gameObject.SetActive(false);
+        inputPwd.gameObject.SetActive(false);
+        inputEmail.gameObject.SetActive(true);
+        changeActiveGameObject("ButtonFindBack", true);
+        changeActiveGameObject("ButtonFindMember", true);
+
+        changeActiveGameObject("ButtonFind", false);
+    }
+
+    public void btnFindBack()
+    {
+        changeActiveGameObject("ButtonJoin", true);
+        changeActiveGameObject("ButtonLogin", true);
+        changeActiveGameObject("ButtonFind", true);
+
+        inputUIReset();
+
+        inputId.gameObject.SetActive(true);
+        inputPwd.gameObject.SetActive(true);
+        inputEmail.gameObject.SetActive(false);
+        labelId.gameObject.SetActive(false);
+        labelPassword.gameObject.SetActive(false);
+        changeActiveGameObject("ButtonFindBack", false);
+        changeActiveGameObject("ButtonFindMember", false);
+    }
+
+    public void btnFindMember()
+    {
+        state = eIntroState.eFIND_MEMBER;
+        currentState = eIntroState.eFIND_MEMBER;
+
+        netManager.gameObject.GetComponent<Network>().eMail = inputEmail.value.ToString();
+
+        inputUIReset();
+        netManager.SendMessage("getMemberInformation", (int)state);
+    }
+
+    void setMemberInformation(string id, string pwd)
+    {
+        labelId.gameObject.SetActive(true);
+        labelPassword.gameObject.SetActive(true);
+
+        labelId.text = "find id is " + id;
+        labelPassword.text = "find password is " + pwd;
+    }
 
 	void connectNetwork()
 	{
@@ -146,22 +209,42 @@ public class UIIntroManager : MonoBehaviour {
                 {
                     Debug.Log("eLOGIN");
                 } break;
+            case eIntroState.eFIND_MEMBER:
+                {
+                    Debug.Log("eFIND_MEMBER");
+                } break;
+
+
             case eIntroState.eSUCCESS_LOGIN:
 		    	{
 		    		SceneManager.LoadScene(1);
 		    	} break;
+            case eIntroState.eSUCCESS_JOIN:
+                {
+                    btnBack();
+                } break;
+            case eIntroState.eSUCCESS_FIND_MEMBER:
+                {
+                    inputEmail.gameObject.SetActive(false);
+                    changeActiveGameObject("ButtonFindMember", false);
+                    setMemberInformation(netManager.gameObject.GetComponent<Network>().id, netManager.gameObject.GetComponent<Network>().passWord);
+                } break;
+
+
             case eIntroState.eERROR_LOGIN:
 		    	{
 		    		Debug.LogError("eERROR_LOGIN");
-		    	} break;
-            case eIntroState.eSUCCESS_JOIN:
-		    	{
-		    		btnBack();
-		    	} break;
+		    	} break;            
             case eIntroState.eERROR_JOIN:
 		    	{
 		    		Debug.LogError("eERROR_JOIN");
 		    	} break;
+            case eIntroState.eERROR_FIND_MEMBER:
+                {
+                    inputEmail.gameObject.SetActive(false);
+                    changeActiveGameObject("ButtonFindMember", false);
+                    setMemberInformation(notFind, notFind);
+                } break;
 		}
 	}
 
