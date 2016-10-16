@@ -9,12 +9,15 @@ public class Network : MonoBehaviour {
         eNONE = 0,
         eJOIN = 1,
         eLOGIN = 2,
+        eLOBBY_INFORMATION = 3,
 
         eSUCCESS_JOIN = 11,
         eSUCCESS_LOGIN = 12,
+        eSUCCESS_LOBBY_INFORMATION = 13,
 
         eERROR_JOIN = 1001,
-        eERROR_LOGIN = 1002
+        eERROR_LOGIN = 1002,
+        eERROR_LOBBY_INFORMATION = 1003
     }
 
     // 필요에 따라 url을 수정한다.
@@ -25,6 +28,8 @@ public class Network : MonoBehaviour {
     public string id { get; set; }
     public string passWord { get; set; }
     public string eMail { get; set; }
+    public int bestScore { get; set; }
+    public int currentStage { get; set; }
 
     void Awake()
     {
@@ -56,8 +61,28 @@ public class Network : MonoBehaviour {
         WWW www = new WWW(url, sendData);
         StartCoroutine(WaitForRequest(www));
     }
+    
+    void getLobbyInformation(int state)
+    {
+        // 송신할 데이터 셋팅
+        WWWForm sendData = new WWWForm();
 
-    // coroutine 및 출력
+        Debug.LogError(state);
+
+        changeState(state);
+        Debug.LogError(currentState);
+        // addfield에서 비교할 키값, 데이터 값 순서.
+        sendData.AddField("functionName", currentState);
+        sendData.AddField("ID", id);
+
+        Debug.LogError((int)currentState + " / " + id);
+
+        // 데이터 송신
+        WWW www = new WWW(url, sendData);
+        StartCoroutine(WaitForLobby(www));
+    }
+
+    // coroutine 및 출력, 로그인, 회원가입.
     private IEnumerator WaitForRequest(WWW www)
     {
         yield return www;
@@ -71,12 +96,41 @@ public class Network : MonoBehaviour {
             changeState(int.Parse(www.text.ToString()));
 			Debug.LogError(currentState);
             
-            //string[] dataTexts = www.text.Split(',');
+        }
+        else
+        {
+            Debug.LogError("www error : " + www.error);
+        }
+    }
+
+    // coroutine 및 출력, 로비 정보.
+    private IEnumerator WaitForLobby(WWW www)
+    {
+        yield return www;
+
+
+        if (www.error == null)
+        {
+            Debug.LogError("www success\n");
+            Debug.LogError(www.text);
+
+            string[] dataTexts = www.text.Split('/');
+
+
+            changeState(int.Parse(dataTexts[0]));
+            bestScore = int.Parse(dataTexts[1]);
+            currentStage = int.Parse(dataTexts[2]);
+
+
+            Debug.LogError(currentState);
+
+
+            //foreach (string dataText in dataTexts)
+            //{
+            //    Debug.LogError(dataText);
+            //}
 
             
-            //foreach (string dataText in dataTexts)
-            //    //Debug.Log(dataText);
-            //    Debug.LogError(dataText);
         }
         else
         {
@@ -92,6 +146,8 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eNONE;
                 } break;
+
+
             case eNetworkState.eJOIN:
                 {
                     eCurrentState = eNetworkState.eJOIN;
@@ -100,6 +156,12 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eLOGIN;
                 } break;
+            case eNetworkState.eLOBBY_INFORMATION:
+                {
+                    eCurrentState = eNetworkState.eLOBBY_INFORMATION;
+                } break;
+
+
             case eNetworkState.eSUCCESS_JOIN:
                 {
                     eCurrentState = eNetworkState.eSUCCESS_JOIN;
@@ -108,6 +170,12 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eSUCCESS_LOGIN;
                 } break;
+            case eNetworkState.eSUCCESS_LOBBY_INFORMATION:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_LOBBY_INFORMATION;
+                } break;
+
+
             case eNetworkState.eERROR_JOIN:
                 {
                     eCurrentState = eNetworkState.eERROR_JOIN;
@@ -115,6 +183,10 @@ public class Network : MonoBehaviour {
             case eNetworkState.eERROR_LOGIN:
                 {
                     eCurrentState = eNetworkState.eERROR_LOGIN;
+                } break;
+            case eNetworkState.eERROR_LOBBY_INFORMATION:
+                {
+                    eCurrentState = eNetworkState.eERROR_LOBBY_INFORMATION;
                 } break;
         }
     }
