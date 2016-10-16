@@ -26,16 +26,27 @@ public class Monster : MonoBehaviour {
     public GameObject[] arrayObject = new GameObject[16];
     float speed = 5.0f;
 	public int monsterHp { get; set; }
+	public enum monsterState{
+		IDLE = 0,
+		RUN,
+		DEAD
+	}
+
+	public Animator animController;
+	public monsterState currentmonsterAnimState = monsterState.IDLE;
 
 	// Use this for initialization
 	void Start () {
         currentMonsterMoveState = STATE.POINT1;
+		currentmonsterAnimState = monsterState.RUN;
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
        transform.position = Vector3.MoveTowards(transform.position, arrayObject[(int)currentMonsterMoveState].transform.position, speed * Time.deltaTime);
+		if (animController != null)
+			animController.SetInteger ("monsterState", (int)currentmonsterAnimState);
        UpdateState();
 	}
 
