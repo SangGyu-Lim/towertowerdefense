@@ -6,11 +6,13 @@ public class buildManager : MonoBehaviour {
     Ray ray;
     RaycastHit hitInfo;
 
-    public bool isTouch = false;
+    public bool[] isBuild;
+
     public GameObject goStageManager;
     GameObject goBuildObject;
 
     const int towerSize = 2;
+    const int boxCount = 3;
 
     struct sTower
     {
@@ -38,7 +40,8 @@ public class buildManager : MonoBehaviour {
     void Awake()
     {
         Debug.Log("buildManager awake");
-        
+
+        initValue();
         fileLoad();
 
         //towerInfo = new sTower[5];
@@ -71,17 +74,13 @@ public class buildManager : MonoBehaviour {
 
                 string[] dataTexts = hitInfo.transform.gameObject.name.Split('_');
 
-                Debug.Log(dataTexts.Length);
-                Debug.Log("datatexts 0" + dataTexts[0]);
-                Debug.Log("datatexts 1" + dataTexts[1]);
-
                 foreach (string dataText in dataTexts)
                 {
                     Debug.Log(dataText);
 
                     if (dataText == "box")
                     {
-                        isTouch = true;
+                        isBuild[int.Parse(dataTexts[2])] = true;
                         goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
                         goBuildObject = GameObject.Find(hitInfo.transform.gameObject.name);
                         break;
@@ -98,6 +97,10 @@ public class buildManager : MonoBehaviour {
          
 	}
 
+    void OnDestroy()
+    {
+        Debug.Log("buildManager ondestroy");
+    }
 
     /* test
     void towerInit()
@@ -129,8 +132,6 @@ public class buildManager : MonoBehaviour {
     {
         switch (goStageManager.GetComponent<UIStageManager>().state)
         {
-            
-
             case UIStageManager.eStageState.eBUILD_TOWER0:
                 {
                     
@@ -160,6 +161,12 @@ public class buildManager : MonoBehaviour {
                     buildTower("nurse");
                     
                 } break;
+
+            case UIStageManager.eStageState.eDESTROY_TOWER:
+                {
+                    destroyTower();
+
+                } break;
         }
 
         goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
@@ -185,9 +192,18 @@ public class buildManager : MonoBehaviour {
     {
     }
 
+    void initValue()
+    {
+        isBuild = new bool[boxCount];
+
+        for (int i = 0; i < boxCount; ++i)
+            isBuild[i] = false;
+
+    }
+
     void fileLoad()
     {
     }
 
-
+    
 }

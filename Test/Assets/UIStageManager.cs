@@ -13,10 +13,13 @@ public class UIStageManager : MonoBehaviour {
         eBUILD_TOWER2 = 13,
         eBUILD_TOWER3 = 14,
         eBUILD_TOWER4 = 15,
-        eBUILD_TOWER5 = 16
+        eBUILD_TOWER5 = 16,
+
+        eDESTROY_TOWER = 101
     }
 
     public GameObject goTowerPanel;
+    public GameObject goDestroyPanel;
 
     public eStageState state = eStageState.eNONE;
 
@@ -70,5 +73,11 @@ public class UIStageManager : MonoBehaviour {
     {
         state = eStageState.eBUILD_TOWER5;
         Debug.Log("tower5");
+    }
+
+    public void destroyBtn()
+    {
+        state = eStageState.eDESTROY_TOWER;
+        Debug.Log("destroyBtn");
     }
 }
