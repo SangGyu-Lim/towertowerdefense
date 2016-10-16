@@ -4,7 +4,7 @@ using System.Collections;
 
 public class UIIntroManager : MonoBehaviour {
 
-	enum eState
+	enum eIntroState
 	{
 		eNONE = 0,
 		eJOIN = 1,
@@ -23,8 +23,8 @@ public class UIIntroManager : MonoBehaviour {
 	public UIInput inputPwd;
 	public UIInput inputEmail;
 
-	eState currentState = eState.eNONE;
-	eState state = eState.eNONE;
+    eIntroState currentState = eIntroState.eNONE;
+    eIntroState state = eIntroState.eNONE;
 
 	// Use this for initialization
 	void Start () {
@@ -37,7 +37,7 @@ public class UIIntroManager : MonoBehaviour {
 	void Update () {
 		Debug.Log("updata");
 
-        state = (eState)netManager.gameObject.GetComponent<Network>().currentState;
+        state = (eIntroState)netManager.gameObject.GetComponent<Network>().currentState;
         if (currentState != state)
         {
             currentState = state;
@@ -50,7 +50,7 @@ public class UIIntroManager : MonoBehaviour {
 	{
 		Debug.Log("btn login");
 
-        state = eState.eLOGIN;
+        state = eIntroState.eLOGIN;
 
 		connectNetwork();
 	}
@@ -73,7 +73,7 @@ public class UIIntroManager : MonoBehaviour {
 	// 회원가입
 	public void btnJoinMember()
 	{
-        state = eState.eJOIN;        
+        state = eIntroState.eJOIN;        
 
 		connectNetwork();
 
@@ -100,7 +100,7 @@ public class UIIntroManager : MonoBehaviour {
 		netManager.gameObject.GetComponent<Network>().id = inputId.value.ToString();
 		netManager.gameObject.GetComponent<Network>().passWord = inputPwd.value.ToString();
 
-        if (state == eState.eJOIN)
+        if (state == eIntroState.eJOIN)
 			netManager.gameObject.GetComponent<Network>().eMail = inputEmail.value.ToString();
 
         inputUIReset();
@@ -134,31 +134,31 @@ public class UIIntroManager : MonoBehaviour {
 	{
 		switch (currentState)
 		{
-            case eState.eNONE:
+            case eIntroState.eNONE:
                 {
                     Debug.Log("eNONE");
                 } break;
-            case eState.eJOIN:
+            case eIntroState.eJOIN:
                 {
                     Debug.Log("eJOIN");
                 } break;
-            case eState.eLOGIN:
+            case eIntroState.eLOGIN:
                 {
                     Debug.Log("eLOGIN");
                 } break;
-		    case eState.eSUCCESS_LOGIN:
+            case eIntroState.eSUCCESS_LOGIN:
 		    	{
 		    		SceneManager.LoadScene(1);
 		    	} break;
-		    case eState.eERROR_LOGIN:
+            case eIntroState.eERROR_LOGIN:
 		    	{
 		    		Debug.LogError("eERROR_LOGIN");
 		    	} break;
-		    case eState.eSUCCESS_JOIN:
+            case eIntroState.eSUCCESS_JOIN:
 		    	{
 		    		btnBack();
 		    	} break;
-		    case eState.eERROR_JOIN:
+            case eIntroState.eERROR_JOIN:
 		    	{
 		    		Debug.LogError("eERROR_JOIN");
 		    	} break;
