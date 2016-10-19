@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.IO;
+
 
 public class buildManager : MonoBehaviour {
 
@@ -15,14 +15,7 @@ public class buildManager : MonoBehaviour {
     const int towerSize = 2;
     const int boxCount = 3;
 
-    struct sTower
-    {
-        public string name;
-        public int atk;
-        public float range;
-    }
-
-    sTower[] towerInfo;
+    tower towerInfo;
 
     /* test
     public int count;
@@ -44,6 +37,7 @@ public class buildManager : MonoBehaviour {
 
         initValue();
         //fileWrite();
+
         fileLoad();
 
         //towerInfo = new sTower[5];
@@ -184,14 +178,15 @@ public class buildManager : MonoBehaviour {
 
     void buildTower(string towerName)
     {
-        GameObject temp;
-        temp = goTargetObject.transform.FindChild("tower").gameObject;
+        GameObject temp/*, parentTemp*/;
+        //parentTemp = goTargetObject.transform.FindChild("tower").gameObject;
         //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
         //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
         //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
 
+        // build tower
         temp = Instantiate(Resources.Load("Hero/" + towerName), Vector3.zero, Quaternion.identity) as GameObject;
-        temp.transform.parent = goTargetObject.transform;
+        temp.transform.parent = /*parentTemp.transform*/towerInfo.transform;
         temp.transform.localScale = new Vector3(towerSize, towerSize, towerSize);
         temp.transform.position = Vector3.zero;
         temp.transform.localPosition = Vector3.zero;
@@ -213,40 +208,8 @@ public class buildManager : MonoBehaviour {
             isBuild[i] = false;
 
     }
-
-    void fileLoad()
-    {
-        StreamReader sr = new StreamReader("testFileInputOutput.txt");
-        string str;
-
-        str = sr.ReadLine();
-        int towerCount = int.Parse(str);
-        towerInfo = new sTower[towerCount];
-
-        for (int i = 0; i < towerCount; ++i )
-        {
-            str = sr.ReadLine();
-            if (str == null) break;
-            else
-            {
-                string[] dataTexts = str.Split('\t');
-                
-                towerInfo[i].name = dataTexts[0];
-                towerInfo[i].atk = int.Parse(dataTexts[1]);
-                towerInfo[i].range = float.Parse(dataTexts[2]);
-            }
-        }
-    }
-
-    void fileWrite()
-    {
-        StreamWriter sw = new StreamWriter("testFileInputOutput.txt");
-        sw.WriteLine("line write");
-        sw.Write("write");
-        sw.WriteLine("line write");
-        sw.Flush();
-        sw.Close();
-    }
+    
+    
 
     
 }
