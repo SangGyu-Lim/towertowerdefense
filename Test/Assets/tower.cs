@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.IO;
 
 public class tower : MonoBehaviour {
 
@@ -34,39 +33,19 @@ public class tower : MonoBehaviour {
 	
 	}
 
+    public void setTower(string towerName, int towerAtk, float towerAtkRange)
+    {
+        name = towerName;
+        atk = towerAtk;
+        range = towerAtkRange;
+    }
+
+    public void resetTower()
+    {
+        name = "";
+        atk = -1;
+        range = -1.0f;
+    }
+
     
-
-    void fileLoad()
-    {
-        StreamReader sr = new StreamReader("testFileInputOutput.txt");
-        string str;
-
-        str = sr.ReadLine();
-        int towerCount = int.Parse(str);
-        towerInfo = new sTower[towerCount];
-
-        for (int i = 0; i < towerCount; ++i)
-        {
-            str = sr.ReadLine();
-            if (str == null) break;
-            else
-            {
-                string[] dataTexts = str.Split('\t');
-
-                towerInfo[i].name = dataTexts[0];
-                towerInfo[i].atk = int.Parse(dataTexts[1]);
-                towerInfo[i].range = float.Parse(dataTexts[2]);
-            }
-        }
-    }
-
-    void fileWrite()
-    {
-        StreamWriter sw = new StreamWriter("testFileInputOutput.txt");
-        sw.WriteLine("line write");
-        sw.Write("write");
-        sw.WriteLine("line write");
-        sw.Flush();
-        sw.Close();
-    }
 }

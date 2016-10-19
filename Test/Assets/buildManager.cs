@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.IO;
 
 public class buildManager : MonoBehaviour {
 
@@ -8,6 +8,8 @@ public class buildManager : MonoBehaviour {
     RaycastHit hitInfo;
 
     public bool[] isBuild;
+    public bool isTowerPanel;
+    public bool isDestroyPanel;
 
     public GameObject goStageManager;
     GameObject goTargetObject;
@@ -15,7 +17,16 @@ public class buildManager : MonoBehaviour {
     const int towerSize = 2;
     const int boxCount = 3;
 
-    tower towerInfo;
+    struct sTowerFile
+    {
+        public string name;
+        public int atk;
+        public float range;
+    }
+
+    sTowerFile[] allTowerInfo;
+
+    tower cTower;
 
     /* test
     public int count;
@@ -42,7 +53,8 @@ public class buildManager : MonoBehaviour {
 
         //towerInfo = new sTower[5];
 
-        
+        isTowerPanel = false;
+        isDestroyPanel = false;
 
     }
 	// Use this for initialization
@@ -74,18 +86,25 @@ public class buildManager : MonoBehaviour {
                 {
                     Debug.Log(dataText);
 
-                    if (dataText == "box")
+                    if (!isTowerPanel && !isDestroyPanel)
                     {
-                        isBuild[int.Parse(dataTexts[1])] = true;
-                        goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
-                        goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
-                        break;
-                    }
-                    else if (dataText == "clone")
-                    {
-                        goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
-                        goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
-                        break;
+                        if (dataText == "box")
+                        {
+                            isTowerPanel = true;
+
+                            isBuild[int.Parse(dataTexts[1])] = true;
+                            goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
+                            goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
+                            break;
+                        }
+                        else if (dataText == "clone")
+                        {
+                            isDestroyPanel = true;
+
+                            goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
+                            goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
+                            break;
+                        }
                     }
                 }           
                 
@@ -141,7 +160,7 @@ public class buildManager : MonoBehaviour {
 
             case UIStageManager.eStageState.eBUILD_TOWER1:
                 {
-                    buildTower("knight");
+                    buildTower(0);
                     
                 } break;
 
@@ -151,7 +170,7 @@ public class buildManager : MonoBehaviour {
 
             case UIStageManager.eStageState.eBUILD_TOWER3:
                 {
-                    buildTower("king");
+                    buildTower(1);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER4:
@@ -160,7 +179,7 @@ public class buildManager : MonoBehaviour {
 
             case UIStageManager.eStageState.eBUILD_TOWER5:
                 {
-                    buildTower("nurse");
+                    buildTower(2);
                     
                 } break;
 
@@ -171,32 +190,39 @@ public class buildManager : MonoBehaviour {
                 } break;
         }
 
+        isTowerPanel = false;
+        isDestroyPanel = false;
         goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eNONE;
     }
 
-    void buildTower(string towerName)
+    void buildTower(int towerNum)
     {
-        GameObject temp/*, parentTemp*/;
-        //parentTemp = goTargetObject.transform.FindChild("tower").gameObject;
+        GameObject temp, parentTemp;
+        parentTemp = goTargetObject.transform.FindChild("tower").gameObject;
+        
         //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
         //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
         //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
 
         // build tower
-        temp = Instantiate(Resources.Load("Hero/" + towerName), Vector3.zero, Quaternion.identity) as GameObject;
-        temp.transform.parent = /*parentTemp.transform*/towerInfo.transform;
+        temp = Instantiate(Resources.Load("Hero/" + allTowerInfo[towerNum].name), Vector3.zero, Quaternion.identity) as GameObject;
+        temp.transform.parent = parentTemp.transform/*cTower.transform*/;
         temp.transform.localScale = new Vector3(towerSize, towerSize, towerSize);
         temp.transform.position = Vector3.zero;
         temp.transform.localPosition = Vector3.zero;
-        temp.name = "clone_" + towerName;
+        temp.name = "clone_" + goTargetObject.name;
+
+        parentTemp.GetComponent<tower>().setTower(allTowerInfo[towerNum].name, allTowerInfo[towerNum].atk, allTowerInfo[towerNum].range);
     }
 
     void destroyTower()
     {
         GameObject temp;
         temp = goTargetObject;
+
+        temp.transform.parent.GetComponent<tower>().resetTower();
         Destroy(temp);
     }
 
@@ -208,8 +234,40 @@ public class buildManager : MonoBehaviour {
             isBuild[i] = false;
 
     }
-    
-    
+
+    void fileLoad()
+    {
+        StreamReader sr = new StreamReader("testFileInputOutput.txt");
+        string str;
+
+        str = sr.ReadLine();
+        int towerCount = int.Parse(str);
+        allTowerInfo = new sTowerFile[towerCount];
+
+        for (int i = 0; i < towerCount; ++i)
+        {
+            str = sr.ReadLine();
+            if (str == null) break;
+            else
+            {
+                string[] dataTexts = str.Split('\t');
+
+                allTowerInfo[i].name = dataTexts[0];
+                allTowerInfo[i].atk = int.Parse(dataTexts[1]);
+                allTowerInfo[i].range = float.Parse(dataTexts[2]);
+            }
+        }
+    }
+
+    void fileWrite()
+    {
+        StreamWriter sw = new StreamWriter("testFileInputOutput.txt");
+        sw.WriteLine("line write");
+        sw.Write("write");
+        sw.WriteLine("line write");
+        sw.Flush();
+        sw.Close();
+    }
 
     
 }
