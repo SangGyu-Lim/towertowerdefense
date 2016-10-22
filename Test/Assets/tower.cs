@@ -1,14 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class tower : MonoBehaviour {
+public class tower : MonoBehaviour
+{
 
     public string name;
     public int atk;
     public float range;
-    
+    public float speed = 2.0f;
 
+    public bool isAtk;
 
+    public GameObject targetMonster;
+    public int targetNum;
+
+    private float fTickTime = 1.0f;
 
     void Awake()
     {
@@ -23,15 +29,37 @@ public class tower : MonoBehaviour {
     }
 
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    // Use this for initialization
+    void Start()
+    {
+        //targetMonster = MonsterGenManager;
+        targetMonster = GameObject.Find("MonsterGenManager");
+        isAtk = false;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        fTickTime += Time.deltaTime;
+        if (fTickTime >= speed)
+        {
+            fTickTime = 0.0f;
+
+            if (!isAtk)
+            {
+                if (checkRange())
+                {
+                    isAtk = true;
+                }
+            }
+            else
+            {
+                checkOutRange();
+                atkMonster();
+            }
+        }
+
+    }
 
     public void setTower(string towerName, int towerAtk, float towerAtkRange)
     {
@@ -47,5 +75,30 @@ public class tower : MonoBehaviour {
         range = -1.0f;
     }
 
-    
+    public bool checkRange()
+    {
+        for (targetNum = 0; targetNum < targetMonster.GetComponent<MonsterGenManager>().maxMonsterCount; ++targetNum)
+        {
+            Debug.Log(Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].transform.position));
+            if (Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].transform.position) < range)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void checkOutRange()
+    {
+        if (Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].transform.position) > range)
+        {
+            isAtk = false;
+        }
+    }
+
+    public void atkMonster()
+    {
+        targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp -= atk;
+    }
 }
