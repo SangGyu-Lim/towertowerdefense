@@ -7,14 +7,14 @@ public class tower : MonoBehaviour
     public string name;
     public int atk;
     public float range;
-    public float speed = 2.0f;
+    public float speed = 3.0f;
 
     public bool isAtk;
 
     public GameObject targetMonster;
     public int targetNum;
 
-    private float fTickTime = 1.0f;
+    private float fTickTime = 0.0f;
 
     void Awake()
     {
@@ -77,7 +77,7 @@ public class tower : MonoBehaviour
 
     public bool checkRange()
     {
-        for (targetNum = 0; targetNum < targetMonster.GetComponent<MonsterGenManager>().maxMonsterCount; ++targetNum)
+        for (targetNum = 0; targetNum < targetMonster.GetComponent<MonsterGenManager>().currentMonsterNum; ++targetNum)
         {
             Debug.Log(Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].transform.position));
             if (Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].transform.position) < range)
@@ -100,5 +100,13 @@ public class tower : MonoBehaviour
     public void atkMonster()
     {
         targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp -= atk;
+        atkEffect();
+    }
+
+    IEnumerator atkEffect()
+    {
+        Instantiate(Resources.Load("AttackEffect/ArcaneSlash"), targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].transform.position, Quaternion.identity);
+
+        yield return new WaitForSeconds(2.0f);
     }
 }

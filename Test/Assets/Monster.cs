@@ -27,7 +27,7 @@ public class Monster : MonoBehaviour
     public GameObject[] arrayObject = new GameObject[16];
     float speed = 3.0f;
     float rotSpeed = 350.0f;
-    public int monsterHp { get; set; }
+    public int monsterHp;
     Animator anim;
     //public enum monsterState{
     //	IDLE = 0,
@@ -54,7 +54,7 @@ public class Monster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        checkIsDead();
+        //checkIsDead();
         Vector3 moveDir = new Vector3(arrayObject[(int)currentMonsterMoveState].transform.position.x, arrayObject[(int)currentMonsterMoveState].transform.position.y);
         transform.position = Vector3.MoveTowards(transform.position, arrayObject[(int)currentMonsterMoveState].transform.position, speed * Time.deltaTime);
 
@@ -112,5 +112,11 @@ public class Monster : MonoBehaviour
         anim.Play("die3");
 
         yield return new WaitForSeconds(100.0f);
+    }
+
+    void checkDestroy()
+    {
+        if (monsterHp < 0)
+            Destroy(this);
     }
 }
