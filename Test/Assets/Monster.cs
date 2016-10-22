@@ -23,7 +23,17 @@ public class Monster : MonoBehaviour
         POINT15,
         POINT16,
     }
+
+	public enum eMonsterLiveState
+	{
+		eALIVE = 0,
+		eDIE = 1,
+		eDESTROY = 2
+	}
+
     private STATE currentMonsterMoveState;
+	public eMonsterLiveState monsterLife = eMonsterLiveState.eALIVE;
+
     public GameObject[] arrayObject = new GameObject[16];
     float speed = 3.0f;
     float rotSpeed = 350.0f;
@@ -107,16 +117,17 @@ public class Monster : MonoBehaviour
             currentMonsterMoveState = STATE.POINT1;
     }
 
-    IEnumerator checkIsDead()
+	public IEnumerator dieAnimation()
     {
-        anim.Play("die3");
+		anim.SetInteger ("animation", 12);
 
-        yield return new WaitForSeconds(100.0f);
+        yield return new WaitForSeconds(1.5f);
     }
 
-    void checkDestroy()
-    {
-        if (monsterHp < 0)
-            Destroy(this);
-    }
+	public void setMonsterLife(eMonsterLiveState state)
+	{
+		monsterLife = state;
+	}
+
+   
 }

@@ -27,7 +27,7 @@ public class MonsterGenManager : MonoBehaviour
     // 3초마다 몬스터를 만든다.
     private float createTime = 0.5f;
     public const int maxMonsterNum = 200;   // 누적 최대 몬스터수
-    public const int maxWaveMonsterNum = 5;   //  웨이브 최대 몬스터수
+    public const int maxWaveMonsterNum = 9;   //  웨이브 최대 몬스터수
     private int currentWaveMonsterNum = 0;  // 현재 웨이브 몬스터 생성수
     public int currentMonsterNum = 0;  //  누적 몬스터 생성수
     private EWave currentWave = EWave.eNONE;
@@ -37,7 +37,7 @@ public class MonsterGenManager : MonoBehaviour
 
     public GameObject[] allMonster;
 
-
+	public int monsterIndex;
 
     // Use this for initialization
     void Start()
@@ -73,6 +73,8 @@ public class MonsterGenManager : MonoBehaviour
             else
                 Debug.Log("GameOver");
         }
+
+		checkDieMonster ();
     }
 
     IEnumerator CreateMonster(EWave state, int hp)
@@ -80,17 +82,34 @@ public class MonsterGenManager : MonoBehaviour
         // 계속해서 createTime동안 monster생성
         int idx = Random.Range(1, points.Length);
         int index = (int)state;
-        for (int i = 0; i < maxMonsterNum; ++i)
-        {
-            Debug.Log(allMonster[i]);
-            if (allMonster[i] == null)
-            {
-                allMonster[i] = Instantiate(monster[index - 1], points[idx - 1].position, Quaternion.identity) as GameObject;
-                break;
-            }
-        }
+        //for (int i = 0; i < maxMonsterNum; ++i)
+        //{
+		//Debug.Log(allMonster[monsterIndex]);
+		while (true)
+		{
+			if (monsterIndex == (maxMonsterNum - 1))
+			{
+				monsterIndex = 0;
+				continue;
+			}
 
-        monster[index - 1].GetComponent<Monster>().monsterHp = hp;
+			if (allMonster [monsterIndex] != null)
+			{
+				++monsterIndex;
+				continue;
+			}
+			else if (allMonster[monsterIndex] == null)
+			{
+				allMonster[monsterIndex] = Instantiate(monster[index - 1], points[idx - 1].position, Quaternion.identity) as GameObject;
+				monster[index - 1].GetComponent<Monster>().monsterHp = hp;
+				++monsterIndex;
+				break;
+			}
+		}
+
+        //}
+
+        
         yield return new WaitForSeconds(createTime);
         //Debug.Log (currentMonsterNum);	
     }
@@ -199,4 +218,24 @@ public class MonsterGenManager : MonoBehaviour
 
         fTickTime = -3.0f;
     }
+
+	void checkDieMonster()
+	{
+		for (int i = 0; i < currentMonsterNum; ++i)
+		{
+			if (allMonster [i] == null)
+				continue;
+			else if (allMonster [i].GetComponent<Monster> ().monsterHp <= 0)
+			{
+				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDIE);
+				StartCoroutine (allMonster [i].GetComponent<Monster> ().dieAnimation ());
+
+				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDESTROY);
+				Destroy (allMonster [i]);
+				changeMonseterCount(false, -1);
+				break;
+			}
+					
+		}
+	}
 }

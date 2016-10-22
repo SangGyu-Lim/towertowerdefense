@@ -22,6 +22,8 @@ public class buildManager : MonoBehaviour {
         public string name;
         public int atk;
         public float range;
+		public float speed;
+		public string skill;
     }
 
     sTowerFile[] allTowerInfo;
@@ -214,7 +216,12 @@ public class buildManager : MonoBehaviour {
         temp.transform.localPosition = Vector3.zero;
         temp.name = "clone_" + goTargetObject.name;
 
-        parentTemp.GetComponent<tower>().setTower(allTowerInfo[towerNum].name, allTowerInfo[towerNum].atk, allTowerInfo[towerNum].range);
+		parentTemp.GetComponent<tower>().setTower(
+			allTowerInfo[towerNum].name,
+			allTowerInfo[towerNum].atk,
+			allTowerInfo[towerNum].range,
+			allTowerInfo[towerNum].speed,
+			allTowerInfo[towerNum].skill);
     }
 
     void destroyTower()
@@ -255,6 +262,8 @@ public class buildManager : MonoBehaviour {
                 allTowerInfo[i].name = dataTexts[0];
                 allTowerInfo[i].atk = int.Parse(dataTexts[1]);
                 allTowerInfo[i].range = float.Parse(dataTexts[2]);
+				allTowerInfo[i].speed = float.Parse(dataTexts[3]);
+				allTowerInfo[i].skill = dataTexts[4];
             }
         }
     }
