@@ -30,6 +30,10 @@ public class buildManager : MonoBehaviour {
 
     tower cTower;
 
+	public Vector2 nowPos, prePos;
+	public Vector3 movePos;
+
+
     /* test
     public int count;
     public GameObject[] towerList;
@@ -74,6 +78,7 @@ public class buildManager : MonoBehaviour {
 	void Update () {
         
         // 터치 입력
+
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Input.GetMouseButtonDown(0))
@@ -112,8 +117,49 @@ public class buildManager : MonoBehaviour {
                 
                 //Debug.Log();
             }
+
+
         }
         
+		if (Input.touchCount == 1)
+		{
+			Touch touch = Input.GetTouch (0);
+			if (touch.phase == TouchPhase.Began)
+			{
+				string[] dataTexts = touch.phase.ToString ().Split ('_');
+
+				foreach (string dataText in dataTexts)
+				{
+					Debug.Log(dataText);
+
+					if (!isTowerPanel && !isDestroyPanel)
+					{
+						if (dataText == "box")
+						{
+							isTowerPanel = true;
+
+							isBuild[int.Parse(dataTexts[1])] = true;
+							goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
+							goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
+							break;
+						}
+						else if (dataText == "clone")
+						{
+							isDestroyPanel = true;
+
+							goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
+							goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
+							break;
+						}
+					}
+				} 
+			}
+			else if (touch.phase == TouchPhase.Ended)
+			{
+			}
+		}
+
+
         // 상태 체크
         if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
             checkState();
