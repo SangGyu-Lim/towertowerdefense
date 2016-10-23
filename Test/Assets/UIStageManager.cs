@@ -18,7 +18,8 @@ public class UIStageManager : MonoBehaviour {
         eDESTROY_TOWER = 101,
 
 		eSETTING = 201,
-		eLOAD = 202
+		eSAVE = 202,
+		eSTAGE_EXIT = 203
     }
 
     public GameObject goTowerPanel;
@@ -89,8 +90,8 @@ public class UIStageManager : MonoBehaviour {
 		state = eStageState.eSETTING;
 	}
 
-	public void loadBtn()
+	public void saveBtn()
 	{
-		state = eStageState.eLOAD;
+		state = eStageState.eSAVE;
 	}
 }

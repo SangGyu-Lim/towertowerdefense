@@ -39,13 +39,6 @@ public class Monster : MonoBehaviour
     float rotSpeed = 350.0f;
     public int monsterHp;
     Animator anim;
-    //public enum monsterState{
-    //	IDLE = 0,
-    //	RUN,
-    //	DEAD
-    //}
-
-    //public monsterState currentmonsterAnimState = monsterState.IDLE;
 
     // Use this for initialization
     void Start()
@@ -53,12 +46,7 @@ public class Monster : MonoBehaviour
         currentMonsterMoveState = STATE.POINT1;
         anim = this.gameObject.GetComponent<Animator>();
 
-        //if (monsterHp <= 0)
-
-        //anim.Play ("Base Layer.");
-        //anim.SetTrigger ("die3");
-        //animController = GetComponent<this.ani>;
-        //currentmonsterAnimState = monsterState.RUN;
+		anim.SetInteger ("animation", 13);
     }
 
     // Update is called once per frame
@@ -128,6 +116,5 @@ public class Monster : MonoBehaviour
 	{
 		monsterLife = state;
 	}
-
    
 }

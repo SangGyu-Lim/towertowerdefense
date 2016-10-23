@@ -14,7 +14,7 @@ public class buildManager : MonoBehaviour {
     public GameObject goStageManager;
     GameObject goTargetObject;
 
-    const int towerSize = 2;
+    const int towerSize = 1;
     const int boxCount = 3;
 
     struct sTowerFile
@@ -53,8 +53,8 @@ public class buildManager : MonoBehaviour {
         Debug.Log("buildManager awake");
 
         initValue();
-        //fileWrite();
-
+        
+		fileWrite();
         fileLoad();
 
         //towerInfo = new sTower[5];
@@ -96,7 +96,7 @@ public class buildManager : MonoBehaviour {
 
                     if (!isTowerPanel && !isDestroyPanel)
                     {
-                        if (dataText == "box")
+						if (dataText == "box" && !isBuild[int.Parse(dataTexts[1])])
                         {
                             isTowerPanel = true;
 
@@ -105,9 +105,11 @@ public class buildManager : MonoBehaviour {
                             goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
                             break;
                         }
-                        else if (dataText == "clone")
+						else if (dataText == "clone" && isBuild[int.Parse(dataTexts[2])])
                         {
                             isDestroyPanel = true;
+
+							isBuild [int.Parse (dataTexts [2])] = false;
 
                             goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
                             goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
@@ -128,6 +130,7 @@ public class buildManager : MonoBehaviour {
          
 	}
 
+	/* test
 	void OnMouseEnter()
 	{
 		Debug.LogError ("mouse enter");
@@ -152,6 +155,7 @@ public class buildManager : MonoBehaviour {
     {
         Debug.Log("buildManager ondestroy");
     }
+	test */
 
     /* test
     void towerInit()
@@ -177,7 +181,7 @@ public class buildManager : MonoBehaviour {
             temp++;
         }
     }
-    */
+    test */
 
     void checkState()
     {
@@ -218,6 +222,25 @@ public class buildManager : MonoBehaviour {
                     destroyTower();
                     
                 } break;
+
+			case UIStageManager.eStageState.eSETTING:
+				{
+					
+			
+				} break;
+			
+			case UIStageManager.eStageState.eSAVE:
+				{
+					
+			
+				} break;
+			
+			case UIStageManager.eStageState.eSTAGE_EXIT:
+				{
+					
+			
+				} break;
+		
         }
 
         isTowerPanel = false;
@@ -242,14 +265,16 @@ public class buildManager : MonoBehaviour {
         temp.transform.localScale = new Vector3(towerSize, towerSize, towerSize);
         temp.transform.position = Vector3.zero;
         temp.transform.localPosition = Vector3.zero;
-        temp.name = "clone_" + goTargetObject.name;
+		temp.name = "clone_" + goTargetObject.name;
 
 		parentTemp.GetComponent<tower>().setTower(
+			towerNum,
 			allTowerInfo[towerNum].name,
 			allTowerInfo[towerNum].atk,
 			allTowerInfo[towerNum].range,
 			allTowerInfo[towerNum].speed,
-			allTowerInfo[towerNum].skill);
+			allTowerInfo[towerNum].skill 
+		);
     }
 
     void destroyTower()
@@ -272,7 +297,7 @@ public class buildManager : MonoBehaviour {
 
     void fileLoad()
     {
-        StreamReader sr = new StreamReader("testFileInputOutput.txt");
+        StreamReader sr = new StreamReader("testFileInputOutput.dat");
         string str;
 
         str = sr.ReadLine();
@@ -298,13 +323,32 @@ public class buildManager : MonoBehaviour {
 
     void fileWrite()
     {
-        StreamWriter sw = new StreamWriter("testFileInputOutput.txt");
-        sw.WriteLine("line write");
-        sw.Write("write");
-        sw.WriteLine("line write");
+        StreamWriter sw = new StreamWriter("testFileInputOutput.dat");
+		sw.WriteLine("3");
+		sw.WriteLine("king\t123\t50\t3\tArcaneSlash");
+		sw.WriteLine("knight\t456\t70\t2\tFireSphereBlast");
+		sw.WriteLine("nurse\t9874\t100\t0.5\tArcaneWallCircle");
         sw.Flush();
         sw.Close();
     }
+
+	void buildTowerSave()
+	{
+		string saveStr = "";
+
+		for (int i = 0; i < boxCount; ++i)
+		{
+			if (isBuild [i])
+			{
+				GameObject temp;
+				temp = GameObject.Find ("box_" + i).transform.FindChild ("tower").gameObject;
+
+				saveStr += (i + "," + temp.GetComponent<tower> ().name + ";");
+
+			}
+		}
+		
+	}
 
     
 }

@@ -4,6 +4,7 @@ using System.Collections;
 public class tower : MonoBehaviour
 {
 
+	public int num;
     public string name;
     public int atk;
     public float range;
@@ -61,10 +62,13 @@ public class tower : MonoBehaviour
             }
         }
 
+		watchTarget ();
+
     }
 
-	public void setTower(string towerName, int towerAtk, float towerAtkRange, float towerAtkSpeed, string towerSkill)
+	public void setTower(int towerNum, string towerName, int towerAtk, float towerAtkRange, float towerAtkSpeed, string towerSkill)
     {
+		num = towerNum;;
         name = towerName;
         atk = towerAtk;
         range = towerAtkRange;
@@ -74,6 +78,7 @@ public class tower : MonoBehaviour
 
     public void resetTower()
     {
+		num = -1;
         name = "";
         atk = -1;
         range = -1.0f;
@@ -133,8 +138,13 @@ public class tower : MonoBehaviour
 		vectorTemp.z = targetMonster.GetComponent<MonsterGenManager> ().allMonster [targetNum].transform.position.z;
 		objTemp = Instantiate(Resources.Load("AttackEffect/" + skill), vectorTemp, Quaternion.identity) as GameObject;
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.5f);
 
 		Destroy (objTemp);
     }
+
+	void watchTarget()
+	{
+		this.transform.GetChild(0).transform.rotation = Quaternion.LookRotation(targetMonster.GetComponent<MonsterGenManager> ().allMonster [targetNum].transform.position);
+	}
 }
