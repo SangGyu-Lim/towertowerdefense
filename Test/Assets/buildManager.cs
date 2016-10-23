@@ -81,6 +81,7 @@ public class buildManager : MonoBehaviour {
 
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+
         if (Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(ray, out hitInfo))
@@ -121,49 +122,30 @@ public class buildManager : MonoBehaviour {
 
         }
         
-		if (Input.touchCount == 1)
-		{
-			Touch touch = Input.GetTouch (0);
-			if (touch.phase == TouchPhase.Began)
-			{
-				string[] dataTexts = touch.phase.ToString ().Split ('_');
-
-				foreach (string dataText in dataTexts)
-				{
-					Debug.Log(dataText);
-
-					if (!isTowerPanel && !isDestroyPanel)
-					{
-						if (dataText == "box")
-						{
-							isTowerPanel = true;
-
-							isBuild[int.Parse(dataTexts[1])] = true;
-							goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
-							goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
-							break;
-						}
-						else if (dataText == "clone")
-						{
-							isDestroyPanel = true;
-
-							goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
-							goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
-							break;
-						}
-					}
-				} 
-			}
-			else if (touch.phase == TouchPhase.Ended)
-			{
-			}
-		}
-
-
         // 상태 체크
         if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
             checkState();
          
+	}
+
+	void OnMouseEnter()
+	{
+		Debug.LogError ("mouse enter");
+	}
+
+	void OnMouseExit()
+	{
+		Debug.LogError ("mouse exit");
+	}
+
+	void OnMouseUp()
+	{
+		Debug.LogError ("mouse up");
+	}
+
+	void OnMouseDown()
+	{
+		Debug.LogError ("mouse down");
 	}
 
     void OnDestroy()
