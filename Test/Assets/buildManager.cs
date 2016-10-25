@@ -236,7 +236,7 @@ public class buildManager : MonoBehaviour
 
             case UIStageManager.eStageState.eSAVE_BUILD_TOWER:
                 {
-                    buildTowerSave();
+                    buildTowerSave((int)UIStageManager.eStageState.eSAVE_BUILD_TOWER);
 
                 } break;
 
@@ -347,7 +347,7 @@ public class buildManager : MonoBehaviour
         sw.Close();
     }
 
-    void buildTowerSave()
+    void buildTowerSave(int state)
     {
         GameObject netManager;
         netManager = GameObject.Find("Network");
@@ -360,10 +360,18 @@ public class buildManager : MonoBehaviour
                 GameObject temp;
                 temp = GameObject.Find("box_" + i).transform.FindChild("tower").gameObject;
 
-                saveStr += (i + "," + temp.GetComponent<tower>().name + ";");
+                saveStr += (i + "," + temp.GetComponent<tower>().num + ";");
 
             }
         }
+
+        netManager.gameObject.GetComponent<Network>().tower = saveStr;
+        netManager.SendMessage("saveBuildTower", state);
+
+    }
+
+    void buildTowerLoad()
+    {
 
     }
 

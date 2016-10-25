@@ -11,16 +11,22 @@ public class Network : MonoBehaviour {
         eLOGIN = 2,
         eLOBBY_INFORMATION = 3,
         eFIND_MEMBER = 4,
+        eSAVE_TOWER = 5,
+        eSAVE_MONSTER = 6,
 
         eSUCCESS_JOIN = 11,
         eSUCCESS_LOGIN = 12,
         eSUCCESS_LOBBY_INFORMATION = 13,
         eSUCCESS_FIND_MEMBER = 14,
+        eSUCCESS_SAVE_TOWER = 15,
+        eSUCCESS_SAVE_MONSTER = 16,
 
         eERROR_JOIN = 1001,
         eERROR_LOGIN = 1002,
         eERROR_LOBBY_INFORMATION = 1003,
-        eERROR_FIND_MEMBER = 1004
+        eERROR_FIND_MEMBER = 1004,
+        eERROR_SAVE_TOWER = 1005,
+        eERROR_SAVE_MONSTER = 1006,
     }
 
     // 필요에 따라 url을 수정한다.
@@ -33,6 +39,8 @@ public class Network : MonoBehaviour {
     public string eMail { get; set; }
     public int bestScore { get; set; }
     public int currentStage { get; set; }
+    public string tower { get; set; }
+
 
     void Awake()
     {
@@ -103,6 +111,27 @@ public class Network : MonoBehaviour {
         // 데이터 송신
         WWW www = new WWW(url, sendData);
         StartCoroutine(WaitForFindMember(www));
+    }
+
+    void saveBuildTower(int state)
+    {
+        // 송신할 데이터 셋팅
+        WWWForm sendData = new WWWForm();
+
+        Debug.LogError(state);
+
+        changeState(state);
+        Debug.LogError(currentState);
+        // addfield에서 비교할 키값, 데이터 값 순서.
+        sendData.AddField("functionName", currentState);
+        sendData.AddField("ID", id);
+        sendData.AddField("tower", eMail);
+
+        Debug.LogError((int)currentState + " / " + id);
+
+        // 데이터 송신
+        WWW www = new WWW(url, sendData);
+        StartCoroutine(WaitForSaveTower(www));
     }
 
     // coroutine 및 출력, 로그인, 회원가입.
@@ -181,6 +210,20 @@ public class Network : MonoBehaviour {
         }
     }
 
+    private IEnumerator WaitForSaveTower(WWW www)
+    {
+        yield return www;
+
+        if (www.error == null)
+        {
+            changeState(int.Parse(www.text));
+        }
+        else
+        {
+            Debug.LogError("www error : " + www.error);
+        }
+    }
+
     void changeState(int state)
     {
         switch((eNetworkState)state)
@@ -207,6 +250,15 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eFIND_MEMBER;
                 } break;
+            case eNetworkState.eSAVE_TOWER:
+                {
+                    eCurrentState = eNetworkState.eSAVE_TOWER;
+                } break;
+            case eNetworkState.eSAVE_MONSTER:
+                {
+                    eCurrentState = eNetworkState.eSAVE_MONSTER;
+                } break;
+
 
 
             case eNetworkState.eSUCCESS_JOIN:
@@ -225,6 +277,15 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eSUCCESS_FIND_MEMBER;
                 } break;
+            case eNetworkState.eSUCCESS_SAVE_TOWER:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_SAVE_TOWER;
+                } break;
+            case eNetworkState.eSUCCESS_SAVE_MONSTER:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_SAVE_MONSTER;
+                } break;
+
 
 
             case eNetworkState.eERROR_JOIN:
@@ -242,6 +303,14 @@ public class Network : MonoBehaviour {
             case eNetworkState.eERROR_FIND_MEMBER:
                 {
                     eCurrentState = eNetworkState.eERROR_FIND_MEMBER;
+                } break;
+            case eNetworkState.eERROR_SAVE_TOWER:
+                {
+                    eCurrentState = eNetworkState.eERROR_SAVE_TOWER;
+                } break;
+            case eNetworkState.eERROR_SAVE_MONSTER:
+                {
+                    eCurrentState = eNetworkState.eERROR_SAVE_MONSTER;
                 } break;
         }
     }
