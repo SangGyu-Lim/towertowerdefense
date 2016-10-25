@@ -43,23 +43,25 @@ public class tower : MonoBehaviour
     void Update()
     {
         fTickTime += Time.deltaTime;
+        checkRange();
         if (fTickTime >= speed)
         {
             fTickTime = 0.0f;
-
+            /*
             if (!isAtk)
             {
-                if (checkRange())
+                
+                if ()
                 {
-                    isAtk = true;
+                    isAtk = true;*/
 					atkMonster ();
-                }
+                /*}
             }
             else
             {
                 checkOutRange();
                 
-            }
+            }*/
         }
 
 		watchTarget ();
@@ -86,7 +88,7 @@ public class tower : MonoBehaviour
 		skill = "";
     }
 
-    public bool checkRange()
+    public void checkRange()
     {
         //for (targetNum = 0; targetNum < targetMonster.GetComponent<MonsterGenManager>().currentMonsterNum; ++targetNum)
 		for (int i = 0; i < targetMonster.GetComponent<MonsterGenManager>().maxMonsterCount; ++i)
@@ -97,15 +99,17 @@ public class tower : MonoBehaviour
 
 			if (targetMonster.GetComponent<MonsterGenManager> ().allMonster [i].GetComponent<Monster> ().monsterLife != Monster.eMonsterLiveState.eALIVE)
 				continue;
+
+            if (Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[i].transform.position) > range)
+                continue;
 			
             if (Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[i].transform.position) <= range)
             {
 				targetNum = i;
-                return true;
+                break;
             }
         }
 
-        return false;
     }
 
     public void checkOutRange()

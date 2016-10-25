@@ -1,7 +1,7 @@
 6
-wizard	123	50	1	FireSphereBlast
-sparcher	456	70	1.5	StormEnchant
-nurse	9874	100	2	FrostEnchant
-king	9874	100	2.5	LightningSphereBlast
-knight	9874	100	3	ArcaneSlash
-woopa	9874	100	3.5	FireWallCircle
+wizard	30	25	3.5	FireSphereBlast
+sparcher	60	50	3	StormEnchant
+nurse	90	75	2.5	FrostEnchant
+king	120	100	2	LightningSphereBlast
+knight	150	125	1.5	ArcaneSlash
+woopa	170	150	1	FireWallCircle

@@ -46,7 +46,7 @@ public class UIStageManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        gold = 100;
         
 	}
 	

@@ -38,7 +38,7 @@ public class MonsterGenManager : MonoBehaviour
     // 3초마다 몬스터를 만든다.
     private float createTime = 0.5f;
     public const int maxMonsterNum = 200;   // 누적 최대 몬스터수
-    public const int maxWaveMonsterNum = 9;   //  웨이브 최대 몬스터수
+    public const int maxWaveMonsterNum = 20;   //  웨이브 최대 몬스터수
     private int currentWaveMonsterNum = 0;  // 현재 웨이브 몬스터 생성수
     public int currentMonsterNum = 0;  //  누적 몬스터 생성수
     private EWave currentWave = EWave.eNONE;
@@ -239,7 +239,7 @@ public class MonsterGenManager : MonoBehaviour
             //	break;            
         }
 
-        fTickTime = -3.0f;
+        fTickTime = -7.0f;
     }
 
 	void checkDieMonster()

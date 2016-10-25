@@ -204,33 +204,39 @@ public class buildManager : MonoBehaviour
         {
             case UIStageManager.eStageState.eBUILD_TOWER0:
                 {
-                    buildTower(0);
+                    if(goldCheck(100))
+                        buildTower(0);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER1:
                 {
-                    buildTower(1);
+                    if (goldCheck(200))
+                        buildTower(1);
 
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER2:
                 {
-                    buildTower(2);
+                    if (goldCheck(300))
+                        buildTower(2);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER3:
                 {
-                    buildTower(3);
+                    if (goldCheck(400))
+                        buildTower(3);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER4:
                 {
-                    buildTower(4);
+                    if (goldCheck(500))
+                        buildTower(4);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER5:
                 {
-                    buildTower(5);
+                    if (goldCheck(600))
+                        buildTower(5);
 
                 } break;
 
@@ -349,12 +355,12 @@ public class buildManager : MonoBehaviour
     {
         StreamWriter sw = new StreamWriter("testFileInputOutput.dat");
         sw.WriteLine("6");
-        sw.WriteLine("wizard\t123\t50\t1\tFireSphereBlast");
-        sw.WriteLine("sparcher\t456\t70\t1.5\tStormEnchant");
-        sw.WriteLine("nurse\t9874\t100\t2\tFrostEnchant");
-        sw.WriteLine("king\t9874\t100\t2.5\tLightningSphereBlast");
-        sw.WriteLine("knight\t9874\t100\t3\tArcaneSlash");
-        sw.WriteLine("woopa\t9874\t100\t3.5\tFireWallCircle");
+        sw.WriteLine("wizard\t30\t25\t3.5\tFireSphereBlast");
+        sw.WriteLine("sparcher\t60\t50\t3\tStormEnchant");
+        sw.WriteLine("nurse\t90\t75\t2.5\tFrostEnchant");
+        sw.WriteLine("king\t120\t100\t2\tLightningSphereBlast");
+        sw.WriteLine("knight\t150\t125\t1.5\tArcaneSlash");
+        sw.WriteLine("woopa\t170\t150\t1\tFireWallCircle");
         sw.Flush();
         sw.Close();
     }
@@ -386,5 +392,15 @@ public class buildManager : MonoBehaviour
 
     }
 
-
+    bool goldCheck(int gold)
+    {
+        if (goStageManager.GetComponent<UIStageManager>().gold >= gold)
+        {
+            goStageManager.GetComponent<UIStageManager>().gold -= gold;
+            goStageManager.GetComponent<UIStageManager>().changeMainPanel();
+            return true;
+        }
+        else
+            return false;
+    }
 }
