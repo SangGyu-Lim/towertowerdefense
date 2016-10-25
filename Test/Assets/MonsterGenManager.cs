@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MonsterGenManager : MonoBehaviour
 {
@@ -45,6 +46,7 @@ public class MonsterGenManager : MonoBehaviour
     private float fDestroyTime = 1.0f;
     private float fTickTime = 1.0f;
     public int maxMonsterCount { get; set; }
+    public const int gameoverMonsterNum = 80;   // 누적 최대 몬스터수
 
     public GameObject[] allMonster;
 
@@ -52,6 +54,8 @@ public class MonsterGenManager : MonoBehaviour
 
     public GameObject goStageManager;
     eSaveOrLoadState saveOrLoadState = eSaveOrLoadState.eNONE;
+
+    public UILabel gameoverLabel;
 
     GameObject netManager;   
     // Use this for initialization
@@ -72,30 +76,44 @@ public class MonsterGenManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        fTickTime += Time.deltaTime;
-        if (fTickTime >= fDestroyTime)
-        {
-            fTickTime = 0.0f;
-
-            if (currentMonsterNum < maxMonsterNum)
+        
+        //{
+            fTickTime += Time.deltaTime;
+            if (fTickTime >= fDestroyTime)
             {
-                if (currentWaveMonsterNum == maxWaveMonsterNum)
+                fTickTime = 0.0f;
+
+                if (currentMonsterNum < maxMonsterNum)
                 {
-                    currentWaveMonsterNum = 0;
-                    changeState();
+                    if (currentWaveMonsterNum == maxWaveMonsterNum)
+                    {
+                        currentWaveMonsterNum = 0;
+                        changeState();
+                    }
+
+                    generateMonster();
                 }
-
-                generateMonster();
+                else
+                    Debug.Log("GameOver");
             }
-            else
-                Debug.Log("GameOver");
+
+            checkDieMonster();
+
+            // 상태 체크
+            if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
+                checkState();
+        /*
         }
+        else
+        {
+            gameover();
+        }*/
+        
+            if (currentMonsterNum > gameoverMonsterNum)
+                gameover();
+        
 
-		checkDieMonster ();
 
-        // 상태 체크
-        if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
-            checkState();
     }
 
     IEnumerator CreateMonster(EWave state, int hp)
@@ -320,5 +338,22 @@ public class MonsterGenManager : MonoBehaviour
 
         netManager.SendMessage("saveMonster", state);
 
+    }
+
+    void gameover()
+    {
+        gameoverLabel.gameObject.SetActive(true);
+
+        StartCoroutine(WaitGameover());
+
+        SceneManager.LoadScene(1);
+    }
+
+    private IEnumerator WaitGameover()
+    {
+        
+        yield return new WaitForSeconds(2.5f);
+
+        
     }
 }
