@@ -10,8 +10,10 @@ public class UIStageManager : MonoBehaviour {
         eTOWERPANEL_FALSE = 1,
 
         eSAVE_BUILD_TOWER = 5,
+        eSAVE_MONSTER = 6,
 
         eSUCCESS_SAVE_TOWER = 15,
+        eSUCCESS_SAVE_MONSTER = 16,
 
         eBUILD_TOWER0 = 21,
         eBUILD_TOWER1 = 22,
@@ -26,7 +28,9 @@ public class UIStageManager : MonoBehaviour {
 		eSAVE = 202,
 		eSTAGE_EXIT = 203,
 
-        eERROR_SAVE_TOWER = 1005
+        eERROR_SAVE_TOWER = 1005,
+        eERROR_SAVE_MONSTER = 1006,
+
     }
 
     public GameObject goTowerPanel;
@@ -45,7 +49,8 @@ public class UIStageManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+
+        
 	}
 
     public void exitBtn()

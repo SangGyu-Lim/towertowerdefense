@@ -16,6 +16,7 @@ public class buildManager : MonoBehaviour
 
     public GameObject goStageManager;
     GameObject goTargetObject;
+    GameObject netManager;        
 
     const int towerSize = 1;
     const int boxCount = 46;
@@ -72,6 +73,7 @@ public class buildManager : MonoBehaviour
     {
         Debug.Log("buildManager start");
 
+        netManager = GameObject.Find("Network");
 
         /* test
         towerList = new GameObject[count];
@@ -130,6 +132,16 @@ public class buildManager : MonoBehaviour
         // 상태 체크
         if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
             checkState();
+
+        if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_TOWER)
+        {
+            goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eSAVE_MONSTER;
+            netManager.gameObject.GetComponent<Network>().currentState = 0;
+        }
+        else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_TOWER)
+        {
+            buildTowerSave((int)UIStageManager.eStageState.eSAVE_BUILD_TOWER);
+        }
 
     }
 
@@ -349,8 +361,7 @@ public class buildManager : MonoBehaviour
 
     void buildTowerSave(int state)
     {
-        GameObject netManager;
-        netManager = GameObject.Find("Network");
+        
         string saveStr = "";
 
         for (int i = 0; i < boxCount; ++i)

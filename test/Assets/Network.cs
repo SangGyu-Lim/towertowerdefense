@@ -33,19 +33,22 @@ public class Network : MonoBehaviour {
     string url = "http://192.168.0.116/connect.php";
 
     eNetworkState eCurrentState = eNetworkState.eNONE;
-    public int currentState { get { return (int)eCurrentState; } }
+    public int currentState { get { return (int)eCurrentState; } set { eCurrentState = eNetworkState.eNONE; } }
     public string id { get; set; }
     public string passWord { get; set; }
     public string eMail { get; set; }
     public int bestScore { get; set; }
     public int currentStage { get; set; }
     public string tower { get; set; }
+    public string[] monster;
 
 
     void Awake()
     {
         Debug.Log("network awake");
         DontDestroyOnLoad(this);
+
+        monster = new string[10];
     }
 
     void ConnectServer(int state)
@@ -125,13 +128,35 @@ public class Network : MonoBehaviour {
         // addfield에서 비교할 키값, 데이터 값 순서.
         sendData.AddField("functionName", currentState);
         sendData.AddField("ID", id);
-        sendData.AddField("tower", eMail);
-
-        Debug.LogError((int)currentState + " / " + id);
+        sendData.AddField("towerDataString", tower);
 
         // 데이터 송신
         WWW www = new WWW(url, sendData);
         StartCoroutine(WaitForSaveTower(www));
+    }
+
+    void saveMonster(int state)
+    {
+        // 송신할 데이터 셋팅
+        WWWForm sendData = new WWWForm();
+
+        Debug.LogError(state);
+
+        changeState(state);
+        Debug.LogError(currentState);
+        // addfield에서 비교할 키값, 데이터 값 순서.
+        sendData.AddField("functionName", currentState);
+        sendData.AddField("ID", id);
+
+        for (int i = 0; i < 10; ++i)
+        {
+            sendData.AddField("monsterDataString" + (i + 1), monster[i]);
+        }
+            
+
+        // 데이터 송신
+        WWW www = new WWW(url, sendData);
+        StartCoroutine(WaitForSaveMonster(www));
     }
 
     // coroutine 및 출력, 로그인, 회원가입.
@@ -212,7 +237,7 @@ public class Network : MonoBehaviour {
 
     private IEnumerator WaitForSaveTower(WWW www)
     {
-        yield return www;
+        
 
         if (www.error == null)
         {
@@ -222,6 +247,24 @@ public class Network : MonoBehaviour {
         {
             Debug.LogError("www error : " + www.error);
         }
+
+        yield return www;
+    }
+
+    private IEnumerator WaitForSaveMonster(WWW www)
+    {
+        
+
+        if (www.error == null)
+        {
+            changeState(int.Parse(www.text));
+        }
+        else
+        {
+            Debug.LogError("www error : " + www.error);
+        }
+
+        yield return www;
     }
 
     void changeState(int state)

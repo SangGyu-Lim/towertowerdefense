@@ -7,6 +7,7 @@ public class MonsterGenManager : MonoBehaviour
     //points는 배열로 담을 수 있도록 한다. 
     public Transform[] points;
     public GameObject[] monster;
+    
     //public GameObject[] monster2;
     //WAVE ENUM
     private enum EWave
@@ -24,6 +25,16 @@ public class MonsterGenManager : MonoBehaviour
         eWAVE10,
         eEND = 11
     }
+
+    enum eSaveOrLoadState
+    {
+        eNONE = 0,
+        eSAVE_MONSTER = 6,
+
+        eSUCCESS_SAVE_MONSTER = 16,
+
+        eERROR_SAVE_MONSTER = 1006,
+    }
     // 3초마다 몬스터를 만든다.
     private float createTime = 0.5f;
     public const int maxMonsterNum = 200;   // 누적 최대 몬스터수
@@ -39,6 +50,10 @@ public class MonsterGenManager : MonoBehaviour
 
 	public int monsterIndex;
 
+    public GameObject goStageManager;
+    eSaveOrLoadState saveOrLoadState = eSaveOrLoadState.eNONE;
+
+    GameObject netManager;   
     // Use this for initialization
     void Start()
     {
@@ -49,6 +64,8 @@ public class MonsterGenManager : MonoBehaviour
 
         allMonster = new GameObject[maxMonsterNum];
         maxMonsterCount = maxMonsterNum;
+
+        netManager = GameObject.Find("Network");
 
     }
 
@@ -75,6 +92,10 @@ public class MonsterGenManager : MonoBehaviour
         }
 
 		checkDieMonster ();
+
+        // 상태 체크
+        if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
+            checkState();
     }
 
     IEnumerator CreateMonster(EWave state, int hp)
@@ -101,6 +122,7 @@ public class MonsterGenManager : MonoBehaviour
 			else if (allMonster[monsterIndex] == null)
 			{
 				allMonster[monsterIndex] = Instantiate(monster[index - 1], points[idx - 1].position, Quaternion.identity) as GameObject;
+                allMonster[monsterIndex].name = "mon_" + index;
 				monster[index - 1].GetComponent<Monster>().monsterHp = hp;
 				++monsterIndex;
 				break;
@@ -238,4 +260,59 @@ public class MonsterGenManager : MonoBehaviour
 					
 		}
 	}
+
+    void checkState()
+    {
+        switch (goStageManager.GetComponent<UIStageManager>().state)
+        {
+            case UIStageManager.eStageState.eSAVE_MONSTER:
+                {
+                    MonsterSave((int)UIStageManager.eStageState.eSAVE_MONSTER);
+                } break;
+
+            case UIStageManager.eStageState.eSUCCESS_SAVE_MONSTER:
+                {
+                    
+
+                } break;
+
+            case UIStageManager.eStageState.eERROR_SAVE_MONSTER:
+                {
+                    
+                } break;
+
+
+        }
+        
+        goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eNONE;
+    }
+    
+    void MonsterSave(int state)
+    {
+
+        string[] saveStr;
+        saveStr = new string[10];
+
+        for (int i = 0; i < maxMonsterNum; ++i)
+        {
+            if (allMonster[i] == null)
+                continue;
+
+            string[] dataTexts = allMonster[i].name.Split('_');
+
+            int x = int.Parse(allMonster[i].transform.position.x.ToString());
+            int y = int.Parse(allMonster[i].transform.position.y.ToString());
+
+            saveStr[int.Parse(dataTexts[1])] += (x.ToString() + "," + y.ToString() + ";");
+        }
+
+        for (int i = 0; i < 10; ++i)
+        {
+            netManager.gameObject.GetComponent<Network>().monster[i] = saveStr[i];
+        }
+            
+
+        netManager.SendMessage("saveMonster", state);
+
+    }
 }
