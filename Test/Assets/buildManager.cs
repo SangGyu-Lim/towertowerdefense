@@ -15,7 +15,7 @@ public class buildManager : MonoBehaviour {
     GameObject goTargetObject;
 
     const int towerSize = 1;
-    const int boxCount = 3;
+    const int boxCount = 46;
 
     struct sTowerFile
     {
