@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class UIStageManager : MonoBehaviour {
 
@@ -8,22 +9,31 @@ public class UIStageManager : MonoBehaviour {
         eNONE = 0,
         eTOWERPANEL_FALSE = 1,
 
-        eBUILD_TOWER0 = 11,
-        eBUILD_TOWER1 = 12,
-        eBUILD_TOWER2 = 13,
-        eBUILD_TOWER3 = 14,
-        eBUILD_TOWER4 = 15,
-        eBUILD_TOWER5 = 16,
+        eSAVE_BUILD_TOWER = 5,
+
+        eSUCCESS_SAVE_TOWER = 15,
+
+        eBUILD_TOWER0 = 21,
+        eBUILD_TOWER1 = 22,
+        eBUILD_TOWER2 = 23,
+        eBUILD_TOWER3 = 24,
+        eBUILD_TOWER4 = 25,
+        eBUILD_TOWER5 = 26,
 
         eDESTROY_TOWER = 101,
 
 		eSETTING = 201,
 		eSAVE = 202,
-		eSTAGE_EXIT = 203
+		eSTAGE_EXIT = 203,
+
+        eERROR_SAVE_TOWER = 1005
     }
 
     public GameObject goTowerPanel;
     public GameObject goDestroyPanel;
+    public GameObject goSettingPanel;
+    public UILabel scoreLabel;
+    public UILabel goldLabel;
 
     public eStageState state = eStageState.eNONE;
 
@@ -87,11 +97,22 @@ public class UIStageManager : MonoBehaviour {
 
 	public void settingBtn()
 	{
-		state = eStageState.eSETTING;
+        goSettingPanel.SetActive(true);
+
 	}
+
+    public void settingExitBtn()
+    {
+        goSettingPanel.SetActive(false);
+    }
 
 	public void saveBtn()
 	{
-		state = eStageState.eSAVE;
+        state = eStageState.eSAVE_BUILD_TOWER;
 	}
+
+    public void stageExitBtn()
+    {
+        SceneManager.LoadScene(1);
+    }
 }
