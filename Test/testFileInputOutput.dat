@@ -1,4 +1,7 @@
-3
-king	123	50	3	ArcaneSlash
-knight	456	70	2	FireSphereBlast
-nurse	9874	100	0.5	ArcaneWallCircle
+6
+wizard	123	50	1	FireSphereBlast
+sparcher	456	70	1.5	StormEnchant
+nurse	9874	100	2	FrostEnchant
+king	9874	100	2.5	LightningSphereBlast
+knight	9874	100	3	ArcaneSlash
+woopa	9874	100	3.5	FireWallCircle

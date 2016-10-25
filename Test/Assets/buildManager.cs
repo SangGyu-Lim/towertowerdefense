@@ -2,7 +2,8 @@
 using System.Collections;
 using System.IO;
 
-public class buildManager : MonoBehaviour {
+public class buildManager : MonoBehaviour
+{
 
     Ray ray;
     RaycastHit hitInfo;
@@ -10,6 +11,8 @@ public class buildManager : MonoBehaviour {
     public bool[] isBuild;
     public bool isTowerPanel;
     public bool isDestroyPanel;
+    public bool isSettingPanel;
+    public bool isNetwork;
 
     public GameObject goStageManager;
     GameObject goTargetObject;
@@ -22,16 +25,16 @@ public class buildManager : MonoBehaviour {
         public string name;
         public int atk;
         public float range;
-		public float speed;
-		public string skill;
+        public float speed;
+        public string skill;
     }
 
     sTowerFile[] allTowerInfo;
 
     tower cTower;
 
-	public Vector2 nowPos, prePos;
-	public Vector3 movePos;
+    public Vector2 nowPos, prePos;
+    public Vector3 movePos;
 
 
     /* test
@@ -53,18 +56,20 @@ public class buildManager : MonoBehaviour {
         Debug.Log("buildManager awake");
 
         initValue();
-        
-		fileWrite();
+
+        fileWrite();
         fileLoad();
 
         //towerInfo = new sTower[5];
 
         isTowerPanel = false;
         isDestroyPanel = false;
+        isNetwork = false;
 
     }
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         Debug.Log("buildManager start");
 
 
@@ -73,10 +78,11 @@ public class buildManager : MonoBehaviour {
         towerInit();
         */
     }
-	
-	// Update is called once per frame
-	void Update () {
-        
+
+    // Update is called once per frame
+    void Update()
+    {
+
         // 터치 입력
 
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -96,66 +102,63 @@ public class buildManager : MonoBehaviour {
 
                     if (!isTowerPanel && !isDestroyPanel)
                     {
-						if (dataText == "box" && !isBuild[int.Parse(dataTexts[1])])
+                        if (dataText == "box" && !isBuild[int.Parse(dataTexts[1])])
                         {
                             isTowerPanel = true;
-
-                            isBuild[int.Parse(dataTexts[1])] = true;
+                                                        
                             goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
                             goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
                             break;
                         }
-						else if (dataText == "clone" && isBuild[int.Parse(dataTexts[2])])
+                        else if (dataText == "clone" && isBuild[int.Parse(dataTexts[2])])
                         {
                             isDestroyPanel = true;
-
-							isBuild [int.Parse (dataTexts [2])] = false;
 
                             goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
                             goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
                             break;
                         }
                     }
-                }           
-                
+                }
+
                 //Debug.Log();
             }
 
 
         }
-        
+
         // 상태 체크
         if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
             checkState();
-         
-	}
 
-	/* test
-	void OnMouseEnter()
-	{
-		Debug.LogError ("mouse enter");
-	}
+    }
 
-	void OnMouseExit()
-	{
-		Debug.LogError ("mouse exit");
-	}
+    /* test
+    void OnMouseEnter()
+    {
+        Debug.LogError ("mouse enter");
+    }
 
-	void OnMouseUp()
-	{
-		Debug.LogError ("mouse up");
-	}
+    void OnMouseExit()
+    {
+        Debug.LogError ("mouse exit");
+    }
 
-	void OnMouseDown()
-	{
-		Debug.LogError ("mouse down");
-	}
+    void OnMouseUp()
+    {
+        Debug.LogError ("mouse up");
+    }
+
+    void OnMouseDown()
+    {
+        Debug.LogError ("mouse down");
+    }
 
     void OnDestroy()
     {
         Debug.Log("buildManager ondestroy");
     }
-	test */
+    test */
 
     /* test
     void towerInit()
@@ -189,64 +192,68 @@ public class buildManager : MonoBehaviour {
         {
             case UIStageManager.eStageState.eBUILD_TOWER0:
                 {
-                    
+                    buildTower(0);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER1:
                 {
-                    buildTower(0);
-                    
+                    buildTower(1);
+
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER2:
                 {
+                    buildTower(2);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER3:
                 {
-                    buildTower(1);
+                    buildTower(3);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER4:
                 {
+                    buildTower(4);
                 } break;
 
             case UIStageManager.eStageState.eBUILD_TOWER5:
                 {
-                    buildTower(2);
-                    
+                    buildTower(5);
+
                 } break;
 
             case UIStageManager.eStageState.eDESTROY_TOWER:
                 {
                     destroyTower();
-                    
+
                 } break;
 
-			case UIStageManager.eStageState.eSETTING:
-				{
-					
-			
-				} break;
-			
-			case UIStageManager.eStageState.eSAVE:
-				{
-					
-			
-				} break;
-			
-			case UIStageManager.eStageState.eSTAGE_EXIT:
-				{
-					
-			
-				} break;
-		
+            case UIStageManager.eStageState.eSETTING:
+                {
+
+
+                } break;
+
+            case UIStageManager.eStageState.eSAVE_BUILD_TOWER:
+                {
+                    buildTowerSave();
+
+                } break;
+
+            case UIStageManager.eStageState.eSTAGE_EXIT:
+                {
+
+
+                } break;
+
         }
 
         isTowerPanel = false;
         isDestroyPanel = false;
+        isSettingPanel = false;
         goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(false);
+        goStageManager.GetComponent<UIStageManager>().goSettingPanel.SetActive(false);
         goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eNONE;
     }
 
@@ -254,10 +261,12 @@ public class buildManager : MonoBehaviour {
     {
         GameObject temp, parentTemp;
         parentTemp = goTargetObject.transform.FindChild("tower").gameObject;
-        
+
         //temp = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity) as GameObject;
         //this.transform.FindChild("tower").gameObject = Instantiate(Resources.Load("SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
         //Instantiate(Resources.Load("Assets/SD_Project/Prefab/Hero/king"), Vector3.zero, Quaternion.identity);
+        string[] dataTexts = goTargetObject.name.Split('_');
+        isBuild[int.Parse(dataTexts[1])] = true;
 
         // build tower
         temp = Instantiate(Resources.Load("Hero/" + allTowerInfo[towerNum].name), Vector3.zero, Quaternion.identity) as GameObject;
@@ -265,22 +274,25 @@ public class buildManager : MonoBehaviour {
         temp.transform.localScale = new Vector3(towerSize, towerSize, towerSize);
         temp.transform.position = Vector3.zero;
         temp.transform.localPosition = Vector3.zero;
-		temp.name = "clone_" + goTargetObject.name;
+        temp.name = "clone_" + goTargetObject.name;
 
-		parentTemp.GetComponent<tower>().setTower(
-			towerNum,
-			allTowerInfo[towerNum].name,
-			allTowerInfo[towerNum].atk,
-			allTowerInfo[towerNum].range,
-			allTowerInfo[towerNum].speed,
-			allTowerInfo[towerNum].skill 
-		);
+        parentTemp.GetComponent<tower>().setTower(
+            towerNum,
+            allTowerInfo[towerNum].name,
+            allTowerInfo[towerNum].atk,
+            allTowerInfo[towerNum].range,
+            allTowerInfo[towerNum].speed,
+            allTowerInfo[towerNum].skill
+        );
     }
 
     void destroyTower()
     {
         GameObject temp;
         temp = goTargetObject;
+
+        string[] dataTexts = temp.name.Split('_');
+        isBuild[int.Parse(dataTexts[2])] = false;
 
         temp.transform.parent.GetComponent<tower>().resetTower();
         Destroy(temp);
@@ -315,8 +327,8 @@ public class buildManager : MonoBehaviour {
                 allTowerInfo[i].name = dataTexts[0];
                 allTowerInfo[i].atk = int.Parse(dataTexts[1]);
                 allTowerInfo[i].range = float.Parse(dataTexts[2]);
-				allTowerInfo[i].speed = float.Parse(dataTexts[3]);
-				allTowerInfo[i].skill = dataTexts[4];
+                allTowerInfo[i].speed = float.Parse(dataTexts[3]);
+                allTowerInfo[i].skill = dataTexts[4];
             }
         }
     }
@@ -324,31 +336,36 @@ public class buildManager : MonoBehaviour {
     void fileWrite()
     {
         StreamWriter sw = new StreamWriter("testFileInputOutput.dat");
-		sw.WriteLine("3");
-		sw.WriteLine("king\t123\t50\t3\tArcaneSlash");
-		sw.WriteLine("knight\t456\t70\t2\tFireSphereBlast");
-		sw.WriteLine("nurse\t9874\t100\t0.5\tArcaneWallCircle");
+        sw.WriteLine("6");
+        sw.WriteLine("wizard\t123\t50\t1\tFireSphereBlast");
+        sw.WriteLine("sparcher\t456\t70\t1.5\tStormEnchant");
+        sw.WriteLine("nurse\t9874\t100\t2\tFrostEnchant");
+        sw.WriteLine("king\t9874\t100\t2.5\tLightningSphereBlast");
+        sw.WriteLine("knight\t9874\t100\t3\tArcaneSlash");
+        sw.WriteLine("woopa\t9874\t100\t3.5\tFireWallCircle");
         sw.Flush();
         sw.Close();
     }
 
-	void buildTowerSave()
-	{
-		string saveStr = "";
+    void buildTowerSave()
+    {
+        GameObject netManager;
+        netManager = GameObject.Find("Network");
+        string saveStr = "";
 
-		for (int i = 0; i < boxCount; ++i)
-		{
-			if (isBuild [i])
-			{
-				GameObject temp;
-				temp = GameObject.Find ("box_" + i).transform.FindChild ("tower").gameObject;
+        for (int i = 0; i < boxCount; ++i)
+        {
+            if (isBuild[i])
+            {
+                GameObject temp;
+                temp = GameObject.Find("box_" + i).transform.FindChild("tower").gameObject;
 
-				saveStr += (i + "," + temp.GetComponent<tower> ().name + ";");
+                saveStr += (i + "," + temp.GetComponent<tower>().name + ";");
 
-			}
-		}
-		
-	}
+            }
+        }
 
-    
+    }
+
+
 }

@@ -1,4 +1,0 @@
-3
-king	123	50	3	ArcaneSlash
-knight	456	70	2	FireSphereBlast
-nurse	9874	100	0.5	ArcaneWallCircle
