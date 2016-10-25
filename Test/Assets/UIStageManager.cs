@@ -39,6 +39,9 @@ public class UIStageManager : MonoBehaviour {
     public UILabel scoreLabel;
     public UILabel goldLabel;
 
+    public int score;
+    public int gold;
+
     public eStageState state = eStageState.eNONE;
 
 	// Use this for initialization
@@ -119,5 +122,11 @@ public class UIStageManager : MonoBehaviour {
     public void stageExitBtn()
     {
         SceneManager.LoadScene(1);
+    }
+
+    public void changeMainPanel()
+    {
+        scoreLabel.text = "score : " + score.ToString();
+        goldLabel.text = "gold : " + gold.ToString();
     }
 }

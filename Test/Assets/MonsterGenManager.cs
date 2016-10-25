@@ -124,6 +124,7 @@ public class MonsterGenManager : MonoBehaviour
 				allMonster[monsterIndex] = Instantiate(monster[index - 1], points[idx - 1].position, Quaternion.identity) as GameObject;
                 allMonster[monsterIndex].name = "mon_" + index;
 				monster[index - 1].GetComponent<Monster>().monsterHp = hp;
+                monster[index - 1].GetComponent<Monster>().monsterGold = hp;
 				++monsterIndex;
 				break;
 			}
@@ -249,8 +250,13 @@ public class MonsterGenManager : MonoBehaviour
 				continue;
 			else if (allMonster [i].GetComponent<Monster> ().monsterHp <= 0)
 			{
+                
 				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDIE);
 				StartCoroutine (allMonster [i].GetComponent<Monster> ().dieAnimation ());
+
+                goStageManager.GetComponent<UIStageManager>().gold += allMonster[i].GetComponent<Monster>().monsterGold;
+                goStageManager.GetComponent<UIStageManager>().score += 10;
+                goStageManager.GetComponent<UIStageManager>().changeMainPanel();
 
 				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDESTROY);
 				Destroy (allMonster [i]);

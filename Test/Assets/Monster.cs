@@ -38,6 +38,7 @@ public class Monster : MonoBehaviour
     float speed = 3.0f;
     float rotSpeed = 350.0f;
     public int monsterHp;
+    public int monsterGold;
     Animator anim;
 
     // Use this for initialization
