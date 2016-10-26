@@ -39,7 +39,7 @@ public class Network : MonoBehaviour {
     }
 
     // 필요에 따라 url을 수정한다.
-    string url = "http://192.168.0.129/connect.php";
+	string url = "http://210.107.231.38/connect.php";
 
     eNetworkState eCurrentState = eNetworkState.eNONE;
     public int currentState { get { return (int)eCurrentState; } set { eCurrentState = eNetworkState.eNONE; } }
@@ -137,7 +137,10 @@ public class Network : MonoBehaviour {
         // addfield에서 비교할 키값, 데이터 값 순서.
         sendData.AddField("functionName", currentState);
         sendData.AddField("ID", id);
-        sendData.AddField("towerDataString", tower);
+		if(tower == "")
+			sendData.AddField("towerDataString", "-1");
+		else
+			sendData.AddField("towerDataString", tower);
 
         // 데이터 송신
         WWW www = new WWW(url, sendData);
@@ -159,7 +162,10 @@ public class Network : MonoBehaviour {
 
         for (int i = 0; i < 10; ++i)
         {
-            sendData.AddField("monsterDataString" + (i + 1), monster[i]);
+			if(monster[i] == null)
+				sendData.AddField("monsterDataString" + (i + 1), "-1");   
+			else
+				sendData.AddField("monsterDataString" + (i + 1), monster[i]);
         }
             
 

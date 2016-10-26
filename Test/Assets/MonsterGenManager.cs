@@ -340,10 +340,10 @@ public class MonsterGenManager : MonoBehaviour
 
             string[] dataTexts = allMonster[i].name.Split('_');
 
-            int x = int.Parse(allMonster[i].transform.position.x.ToString());
-            int z = int.Parse(allMonster[i].transform.position.z.ToString());
+			int x = (int)allMonster[i].transform.position.x;
+			int z = (int)allMonster[i].transform.position.z;
 
-            saveStr[int.Parse(dataTexts[1])] += (x.ToString() + "," + z.ToString() + ";");
+			saveStr[int.Parse(dataTexts[1]) - 1] += (x.ToString() + "," + z.ToString() + ";");
         }
 
         for (int i = 0; i < 10; ++i)
