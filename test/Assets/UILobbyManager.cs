@@ -37,16 +37,14 @@ public class UILobbyManager : MonoBehaviour {
 	public int trickScore = 100;
 	eCurrentStage stage1 = eCurrentStage.eEASY;
 
-	void Awake()
-	{
-		DontDestroyOnLoad(this);
-	}
+    public GameObject dont;
 
 	/* trick end */
     void Start()
     {
         Debug.Log("lobby start");
 
+        
         //getValue();
 		trickSetLabel();
 		trickSetStage();
@@ -159,8 +157,10 @@ public class UILobbyManager : MonoBehaviour {
 
 	public void trickSetLabel()
 	{
-		labelId.text = "id : " + trickId;
-		labelBestScore.text = "best score\n" + trickScore.ToString();
+        dont = GameObject.Find("dont");
+
+        labelId.text = "id : " + trickId;
+		labelBestScore.text = "best score\n" + dont.GetComponent<dont>().trickScore;
 	}
 
 	public void trickSetStage()

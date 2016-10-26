@@ -44,7 +44,7 @@ public class tower : MonoBehaviour
     {
         fTickTime += Time.deltaTime;
         checkRange();
-        watchTarget();
+        
         if (fTickTime >= speed)
         {
             fTickTime = 0.0f;
@@ -55,7 +55,7 @@ public class tower : MonoBehaviour
                 if ()
                 {
                     isAtk = true;*/
-					//atkMonster ();
+					atkMonster ();
                 /*}
             }
             else
@@ -64,7 +64,7 @@ public class tower : MonoBehaviour
                 
             }*/
         }
-
+        watchTarget();
 		
 
     }
@@ -126,18 +126,14 @@ public class tower : MonoBehaviour
 
     public void atkMonster()
     {
-        
+
+        targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp -= atk;
+        StartCoroutine(atkEffect());
+
 
         if (targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp <= 0)
-        {
             isAtk = false;
-            fTickTime = speed;
-        }
-        else
-        {
-            targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp -= atk;
-            StartCoroutine(atkEffect());
-        }
+
         
     }
 

@@ -368,11 +368,10 @@ public class MonsterGenManager : MonoBehaviour
     private IEnumerator WaitGameover()
     {
 		GameObject temp;
-		temp = GameObject.Find("UILobbyManager");
-		if (temp.GetComponent<UILobbyManager>().trickScore < goStageManager.GetComponent<UIStageManager>().score)
+		temp = GameObject.Find("dont");        
+		if (temp.GetComponent<dont>().trickScore < goStageManager.GetComponent<UIStageManager>().score)
 		{
-			temp.GetComponent<UILobbyManager>().trickScore = goStageManager.GetComponent<UIStageManager>().score;
-			temp.GetComponent<UILobbyManager>().trickSetLabel();
+            temp.GetComponent<dont>().trickScore = goStageManager.GetComponent<UIStageManager>().score;			
 		}
 
         yield return new WaitForSeconds(5.0f);

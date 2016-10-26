@@ -133,11 +133,10 @@ public class UIStageManager : MonoBehaviour {
     public void stageExitBtn()
     {
 		GameObject temp;
-		temp = GameObject.Find("UILobbyManager");
-		if (temp.GetComponent<UILobbyManager>().trickScore < score)
+		temp = GameObject.Find("dont");
+        if (temp.GetComponent<dont>().trickScore < score)
 		{
-			temp.GetComponent<UILobbyManager>().trickScore = score;
-			temp.GetComponent<UILobbyManager>().trickSetLabel();
+            temp.GetComponent<dont>().trickScore = score;
 		}
 
         SceneManager.LoadScene(1);
