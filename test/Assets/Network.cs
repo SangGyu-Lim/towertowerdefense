@@ -13,6 +13,9 @@ public class Network : MonoBehaviour {
         eFIND_MEMBER = 4,
         eSAVE_TOWER = 5,
         eSAVE_MONSTER = 6,
+        eLOAD_TOWER = 7,
+        eLOAD_MONSTER = 8,
+        eSAVE_SCORE_STAGE = 9,
 
         eSUCCESS_JOIN = 11,
         eSUCCESS_LOGIN = 12,
@@ -20,6 +23,9 @@ public class Network : MonoBehaviour {
         eSUCCESS_FIND_MEMBER = 14,
         eSUCCESS_SAVE_TOWER = 15,
         eSUCCESS_SAVE_MONSTER = 16,
+        eSUCCESS_LOAD_TOWER = 17,
+        eSUCCESS_LOAD_MONSTER = 18,
+        eSUCCESS_SAVE_SCORE_STAGE = 19,
 
         eERROR_JOIN = 1001,
         eERROR_LOGIN = 1002,
@@ -27,6 +33,9 @@ public class Network : MonoBehaviour {
         eERROR_FIND_MEMBER = 1004,
         eERROR_SAVE_TOWER = 1005,
         eERROR_SAVE_MONSTER = 1006,
+        eERROR_LOAD_TOWER = 1007,
+        eERROR_LOAD_MONSTER = 1008,
+        eERROR_SAVE_SCORE_STAGE = 1009,
     }
 
     // 필요에 따라 url을 수정한다.
@@ -159,6 +168,31 @@ public class Network : MonoBehaviour {
         StartCoroutine(WaitForSaveMonster(www));
     }
 
+    void saveScoreStage(int state)
+    {
+        // 송신할 데이터 셋팅
+        WWWForm sendData = new WWWForm();
+
+        Debug.LogError(state);
+
+        changeState(state);
+        Debug.LogError(currentState);
+        // addfield에서 비교할 키값, 데이터 값 순서.
+        sendData.AddField("functionName", currentState);
+        sendData.AddField("ID", id);
+        sendData.AddField("score", bestScore);
+        sendData.AddField("stage", currentStage);
+        
+         
+            
+
+        // 데이터 송신
+        WWW www = new WWW(url, sendData);
+        StartCoroutine(WaitForSaveScoreStage(www));
+    }
+
+    
+
     // coroutine 및 출력, 로그인, 회원가입.
     private IEnumerator WaitForRequest(WWW www)
     {
@@ -237,7 +271,7 @@ public class Network : MonoBehaviour {
 
     private IEnumerator WaitForSaveTower(WWW www)
     {
-        
+        yield return www;
 
         if (www.error == null)
         {
@@ -248,12 +282,12 @@ public class Network : MonoBehaviour {
             Debug.LogError("www error : " + www.error);
         }
 
-        yield return www;
+        
     }
 
     private IEnumerator WaitForSaveMonster(WWW www)
     {
-        
+        yield return www;
 
         if (www.error == null)
         {
@@ -264,7 +298,23 @@ public class Network : MonoBehaviour {
             Debug.LogError("www error : " + www.error);
         }
 
+        
+    }
+
+    private IEnumerator WaitForSaveScoreStage(WWW www)
+    {
         yield return www;
+
+        if (www.error == null)
+        {
+            changeState(int.Parse(www.text));
+        }
+        else
+        {
+            Debug.LogError("www error : " + www.error);
+        }
+
+        
     }
 
     void changeState(int state)
@@ -301,6 +351,18 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eSAVE_MONSTER;
                 } break;
+            case eNetworkState.eLOAD_MONSTER:
+                {
+                    eCurrentState = eNetworkState.eLOAD_MONSTER;
+                } break;
+            case eNetworkState.eLOAD_TOWER:
+                {
+                    eCurrentState = eNetworkState.eLOAD_TOWER;
+                } break;
+            case eNetworkState.eSAVE_SCORE_STAGE:
+                {
+                    eCurrentState = eNetworkState.eSAVE_SCORE_STAGE;
+                } break;
 
 
 
@@ -328,6 +390,18 @@ public class Network : MonoBehaviour {
                 {
                     eCurrentState = eNetworkState.eSUCCESS_SAVE_MONSTER;
                 } break;
+            case eNetworkState.eSUCCESS_LOAD_MONSTER:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_LOAD_MONSTER;
+                } break;
+            case eNetworkState.eSUCCESS_LOAD_TOWER:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_LOAD_TOWER;
+                } break;
+            case eNetworkState.eSUCCESS_SAVE_SCORE_STAGE:
+                {
+                    eCurrentState = eNetworkState.eSUCCESS_SAVE_SCORE_STAGE;
+                } break;
 
 
 
@@ -354,6 +428,18 @@ public class Network : MonoBehaviour {
             case eNetworkState.eERROR_SAVE_MONSTER:
                 {
                     eCurrentState = eNetworkState.eERROR_SAVE_MONSTER;
+                } break;                
+            case eNetworkState.eERROR_LOAD_MONSTER:
+                {
+                    eCurrentState = eNetworkState.eERROR_LOAD_MONSTER;
+                } break;
+            case eNetworkState.eERROR_LOAD_TOWER:
+                {
+                    eCurrentState = eNetworkState.eERROR_LOAD_TOWER;
+                } break;
+            case eNetworkState.eERROR_SAVE_SCORE_STAGE:
+                {
+                    eCurrentState = eNetworkState.eERROR_SAVE_SCORE_STAGE;
                 } break;
         }
     }

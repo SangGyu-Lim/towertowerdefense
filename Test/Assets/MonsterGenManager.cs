@@ -46,7 +46,7 @@ public class MonsterGenManager : MonoBehaviour
     private float fDestroyTime = 1.0f;
     private float fTickTime = 1.0f;
     public int maxMonsterCount { get; set; }
-    public const int gameoverMonsterNum = 80;   // 누적 최대 몬스터수
+    public const int gameoverMonsterNum = 80;   // 게임 종료 최대 몬스터수
 
     public GameObject[] allMonster;
 
@@ -99,9 +99,22 @@ public class MonsterGenManager : MonoBehaviour
 
             checkDieMonster();
 
+            if (currentMonsterNum > gameoverMonsterNum)
+                gameover();
+
             // 상태 체크
             if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
                 checkState();
+
+            if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_MONSTER)
+            {
+                scoreStageSave((int)UIStageManager.eStageState.eSAVE_SCORE_STAGE);
+                netManager.gameObject.GetComponent<Network>().currentState = 0;
+            }
+            else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_MONSTER)
+            {
+                MonsterSave((int)UIStageManager.eStageState.eSAVE_MONSTER);
+            }
         /*
         }
         else
@@ -109,8 +122,7 @@ public class MonsterGenManager : MonoBehaviour
             gameover();
         }*/
         
-            if (currentMonsterNum > gameoverMonsterNum)
-                gameover();
+            
         
 
 
@@ -219,7 +231,11 @@ public class MonsterGenManager : MonoBehaviour
         if (isWave)
             currentWaveMonsterNum += changeValue;
         else
+        {
             currentMonsterNum += changeValue;
+            goStageManager.GetComponent<UIStageManager>().monsterCount = currentMonsterNum;
+            goStageManager.GetComponent<UIStageManager>().changeMainPanel();
+        }
 
         //Debug.Log(currentWaveMonsterNum + " / " + currentMonsterNum);
     }
@@ -274,12 +290,12 @@ public class MonsterGenManager : MonoBehaviour
 
                 goStageManager.GetComponent<UIStageManager>().gold += allMonster[i].GetComponent<Monster>().monsterGold;
                 goStageManager.GetComponent<UIStageManager>().score += 10;
-                goStageManager.GetComponent<UIStageManager>().changeMainPanel();
+                //goStageManager.GetComponent<UIStageManager>().changeMainPanel();
 
 				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDESTROY);
 				Destroy (allMonster [i]);
 				changeMonseterCount(false, -1);
-				break;
+				//break;
 			}
 					
 		}
@@ -325,9 +341,9 @@ public class MonsterGenManager : MonoBehaviour
             string[] dataTexts = allMonster[i].name.Split('_');
 
             int x = int.Parse(allMonster[i].transform.position.x.ToString());
-            int y = int.Parse(allMonster[i].transform.position.y.ToString());
+            int z = int.Parse(allMonster[i].transform.position.z.ToString());
 
-            saveStr[int.Parse(dataTexts[1])] += (x.ToString() + "," + y.ToString() + ";");
+            saveStr[int.Parse(dataTexts[1])] += (x.ToString() + "," + z.ToString() + ";");
         }
 
         for (int i = 0; i < 10; ++i)
@@ -346,14 +362,30 @@ public class MonsterGenManager : MonoBehaviour
 
         StartCoroutine(WaitGameover());
 
-        SceneManager.LoadScene(1);
+        
     }
 
     private IEnumerator WaitGameover()
     {
         
-        yield return new WaitForSeconds(2.5f);
+
+        yield return new WaitForSeconds(5.0f);
+
+        //if (Input.GetMouseButtonDown(0)) { }
+        SceneManager.LoadScene(1);
+    }
+
+    void scoreStageSave(int state)
+    {
+        if (netManager.gameObject.GetComponent<Network>().bestScore < goStageManager.GetComponent<UIStageManager>().score)
+        {
+            netManager.gameObject.GetComponent<Network>().bestScore = goStageManager.GetComponent<UIStageManager>().score;
+            netManager.SendMessage("saveScoreStage", state);
+        }
+        
+            
 
         
+
     }
 }

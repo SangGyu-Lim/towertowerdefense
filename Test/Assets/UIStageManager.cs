@@ -11,9 +11,15 @@ public class UIStageManager : MonoBehaviour {
 
         eSAVE_BUILD_TOWER = 5,
         eSAVE_MONSTER = 6,
+        eLOAD_TOWER = 7,
+        eLOAD_MONSTER = 8,
+        eSAVE_SCORE_STAGE = 9,
 
         eSUCCESS_SAVE_TOWER = 15,
         eSUCCESS_SAVE_MONSTER = 16,
+        eSUCCESS_LOAD_TOWER = 17,
+        eSUCCESS_LOAD_MONSTER = 18,
+        eSUCCESS_SAVE_SCORE_STAGE = 19,
 
         eBUILD_TOWER0 = 21,
         eBUILD_TOWER1 = 22,
@@ -30,6 +36,9 @@ public class UIStageManager : MonoBehaviour {
 
         eERROR_SAVE_TOWER = 1005,
         eERROR_SAVE_MONSTER = 1006,
+        eERROR_LOAD_TOWER = 1007,
+        eERROR_LOAD_MONSTER = 1008,
+        eERROR_SAVE_SCORE_STAGE = 1009,
 
     }
 
@@ -38,9 +47,11 @@ public class UIStageManager : MonoBehaviour {
     public GameObject goSettingPanel;
     public UILabel scoreLabel;
     public UILabel goldLabel;
+    public UILabel monsterCountLabel;
 
     public int score;
     public int gold;
+    public int monsterCount;
 
     public eStageState state = eStageState.eNONE;
 
@@ -128,5 +139,6 @@ public class UIStageManager : MonoBehaviour {
     {
         scoreLabel.text = "score : " + score.ToString();
         goldLabel.text = "gold : " + gold.ToString();
+        monsterCountLabel.text = "monster count : " + monsterCount.ToString() + " / 80";
     }
 }

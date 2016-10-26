@@ -31,13 +31,13 @@ public class Monster : MonoBehaviour
 		eDESTROY = 2
 	}
 
-    private STATE currentMonsterMoveState;
+    public STATE currentMonsterMoveState;
 	public eMonsterLiveState monsterLife = eMonsterLiveState.eALIVE;
 
     public GameObject[] arrayObject = new GameObject[16];
     float speed = 3.0f;
     float rotSpeed = 350.0f;
-    public int monsterHp;
+    public int monsterHp = 1;
     public int monsterGold;
     Animator anim;
 
