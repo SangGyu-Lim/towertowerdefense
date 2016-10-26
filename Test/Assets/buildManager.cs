@@ -355,12 +355,12 @@ public class buildManager : MonoBehaviour
     {
         StreamWriter sw = new StreamWriter("testFileInputOutput.dat");
         sw.WriteLine("6");
-        sw.WriteLine("wizard\t30\t25\t3.5\tFireSphereBlast");
-        sw.WriteLine("sparcher\t60\t50\t3\tStormEnchant");
-        sw.WriteLine("nurse\t90\t75\t2.5\tFrostEnchant");
-        sw.WriteLine("king\t120\t100\t2\tLightningSphereBlast");
-        sw.WriteLine("knight\t150\t125\t1.5\tArcaneSlash");
-        sw.WriteLine("woopa\t170\t150\t1\tFireWallCircle");
+        sw.WriteLine("wizard\t45\t25\t1.5\tFireSphereBlast");
+        sw.WriteLine("sparcher\t60\t30\t1.7\tStormEnchant");
+        sw.WriteLine("nurse\t100\t30\t1.55\tFrostEnchant");
+        sw.WriteLine("king\t150\t40\t1\tLightningSphereBlast");
+        sw.WriteLine("knight\t100\t55\t1.0\tArcaneSlash");
+        sw.WriteLine("woopa\t200\t70\t0.7\tFireWallCircle");
         sw.Flush();
         sw.Close();
     }

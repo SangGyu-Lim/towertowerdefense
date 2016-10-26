@@ -31,11 +31,25 @@ public class UILobbyManager : MonoBehaviour {
 
     eCurrentStage stage = eCurrentStage.eEASY;
 
+	/* trick start */
+
+	public string trickId = "test";
+	public int trickScore = 100;
+	eCurrentStage stage1 = eCurrentStage.eEASY;
+
+	void Awake()
+	{
+		DontDestroyOnLoad(this);
+	}
+
+	/* trick end */
     void Start()
     {
         Debug.Log("lobby start");
 
-        getValue();
+        //getValue();
+		trickSetLabel();
+		trickSetStage();
     }
 
     void Update()
@@ -52,9 +66,12 @@ public class UILobbyManager : MonoBehaviour {
 
     public void btnBackLoginScene()
     {
+		Application.Quit();
+		/*
         SceneManager.LoadScene(0);
 
         Debug.Log("btn back");
+         */
     }
 
 	public void btnEnterStage()
@@ -139,4 +156,29 @@ public class UILobbyManager : MonoBehaviour {
             
         }
     }
+
+	public void trickSetLabel()
+	{
+		labelId.text = "id : " + trickId;
+		labelBestScore.text = "best score\n" + trickScore.ToString();
+	}
+
+	public void trickSetStage()
+	{
+		switch (stage1)
+		{
+		case eCurrentStage.eEASY:
+			{
+				GameObject.Find("Normal").SetActive(false);
+				GameObject.Find("Hard").SetActive(false);
+			} break;
+		case eCurrentStage.eNORMAL:
+			{
+				GameObject.Find("Hard").SetActive(false);
+			} break;
+		case eCurrentStage.eHARD:
+			{
+			} break;
+		}
+	}
 }

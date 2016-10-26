@@ -55,7 +55,7 @@ public class tower : MonoBehaviour
                 if ()
                 {
                     isAtk = true;*/
-					atkMonster ();
+					//atkMonster ();
                 /*}
             }
             else
