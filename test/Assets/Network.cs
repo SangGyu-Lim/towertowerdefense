@@ -16,6 +16,7 @@ public class Network : MonoBehaviour {
         eLOAD_TOWER = 7,
         eLOAD_MONSTER = 8,
         eSAVE_SCORE_STAGE = 9,
+		eLOAD_SCORE_STAGE = 10,
 
         eSUCCESS_JOIN = 11,
         eSUCCESS_LOGIN = 12,
@@ -26,6 +27,7 @@ public class Network : MonoBehaviour {
         eSUCCESS_LOAD_TOWER = 17,
         eSUCCESS_LOAD_MONSTER = 18,
         eSUCCESS_SAVE_SCORE_STAGE = 19,
+		eSUCCESS_LOAD_SCORE_STAGE = 20,
 
         eERROR_JOIN = 1001,
         eERROR_LOGIN = 1002,
@@ -36,6 +38,7 @@ public class Network : MonoBehaviour {
         eERROR_LOAD_TOWER = 1007,
         eERROR_LOAD_MONSTER = 1008,
         eERROR_SAVE_SCORE_STAGE = 1009,
+		eERROR_LOAD_SCORE_STAGE = 1010,
     }
 
     // 필요에 따라 url을 수정한다.
@@ -48,8 +51,10 @@ public class Network : MonoBehaviour {
     public string eMail { get; set; }
     public int bestScore { get; set; }
     public int currentStage { get; set; }
+	public int gold { get; set; }
     public string tower { get; set; }
     public string[] monster;
+	public string[] monsterHp;
 
 
     void Awake()
@@ -58,6 +63,7 @@ public class Network : MonoBehaviour {
         DontDestroyOnLoad(this);
 
         monster = new string[10];
+		monsterHp = new string[10];
     }
 
     void ConnectServer(int state)
@@ -147,6 +153,24 @@ public class Network : MonoBehaviour {
         StartCoroutine(WaitForSaveTower(www));
     }
 
+	void loadBuildTower(int state)
+	{
+		// 송신할 데이터 셋팅
+		WWWForm sendData = new WWWForm();
+
+		Debug.LogError(state);
+
+		changeState(state);
+		Debug.LogError(currentState);
+		// addfield에서 비교할 키값, 데이터 값 순서.
+		sendData.AddField("functionName", currentState);
+		sendData.AddField("ID", id);
+
+		// 데이터 송신
+		WWW www = new WWW(url, sendData);
+		StartCoroutine(WaitForLoadTower(www));
+	}
+
     void saveMonster(int state)
     {
         // 송신할 데이터 셋팅
@@ -162,17 +186,38 @@ public class Network : MonoBehaviour {
 
         for (int i = 0; i < 10; ++i)
         {
-			if(monster[i] == null)
-				sendData.AddField("monsterDataString" + (i + 1), "-1");   
-			else
-				sendData.AddField("monsterDataString" + (i + 1), monster[i]);
+			if (monster [i] == null) {
+				sendData.AddField ("monsterDataString" + (i + 1), "-1;");   
+				sendData.AddField ("monsterHpDataString" + (i + 1), "-1;");   
+			} else {
+				sendData.AddField ("monsterDataString" + (i + 1), monster [i]);
+				sendData.AddField ("monsterHpDataString" + (i + 1), monsterHp [i]);
+
+			}
         }
-            
 
         // 데이터 송신
         WWW www = new WWW(url, sendData);
         StartCoroutine(WaitForSaveMonster(www));
     }
+
+	void loadMonster(int state)
+	{
+		// 송신할 데이터 셋팅
+		WWWForm sendData = new WWWForm();
+
+		Debug.LogError(state);
+
+		changeState(state);
+		Debug.LogError(currentState);
+		// addfield에서 비교할 키값, 데이터 값 순서.
+		sendData.AddField("functionName", currentState);
+		sendData.AddField("ID", id);
+
+		// 데이터 송신
+		WWW www = new WWW(url, sendData);
+		StartCoroutine(WaitForLoadMonster(www));
+	}
 
     void saveScoreStage(int state)
     {
@@ -188,7 +233,7 @@ public class Network : MonoBehaviour {
         sendData.AddField("ID", id);
         sendData.AddField("score", bestScore);
         sendData.AddField("stage", currentStage);
-        
+		sendData.AddField("gold", gold);
          
             
 
@@ -196,6 +241,25 @@ public class Network : MonoBehaviour {
         WWW www = new WWW(url, sendData);
         StartCoroutine(WaitForSaveScoreStage(www));
     }
+
+	void loadScoreStage(int state)
+	{
+		// 송신할 데이터 셋팅
+		WWWForm sendData = new WWWForm();
+
+		Debug.LogError(state);
+
+		changeState(state);
+		Debug.LogError(currentState);
+		// addfield에서 비교할 키값, 데이터 값 순서.
+		sendData.AddField("functionName", currentState);
+		sendData.AddField("ID", id);
+
+
+		// 데이터 송신
+		WWW www = new WWW(url, sendData);
+		StartCoroutine(WaitForLoadScoreStage(www));
+	}
 
     
 
@@ -322,6 +386,62 @@ public class Network : MonoBehaviour {
 
         
     }
+
+	private IEnumerator WaitForLoadTower(WWW www)
+	{
+		yield return www;
+
+		if (www.error == null)
+		{
+			string[] dataTexts = www.text.Split('/');
+				tower = dataTexts [1];
+				changeState (int.Parse (dataTexts[0]));
+		}
+		else
+		{
+			Debug.LogError("www error : " + www.error);
+		}
+
+
+	}
+
+	private IEnumerator WaitForLoadMonster(WWW www)
+	{
+		yield return www;
+
+		if (www.error == null)
+		{
+			string[] dataTexts = www.text.Split('/');
+			for (int i = 1; i <= 10; ++i) {
+				monsterHp [i - 1] = dataTexts [(2 * i) - 1];
+				monster[i - 1] = dataTexts[(2 * i)];
+			}
+			changeState(int.Parse(dataTexts[0]));
+		}
+		else
+		{
+			Debug.LogError("www error : " + www.error);
+		}
+
+
+	}
+
+	private IEnumerator WaitForLoadScoreStage(WWW www)
+	{
+		yield return www;
+
+		if (www.error == null)
+		{
+			string[] dataTexts = www.text.Split('/');
+			changeState(int.Parse(www.text));
+		}
+		else
+		{
+			Debug.LogError("www error : " + www.error);
+		}
+
+
+	}
 
     void changeState(int state)
     {

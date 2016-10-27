@@ -94,6 +94,15 @@ public class UILobbyManager : MonoBehaviour {
         Debug.Log("enter hard stage");
     }
 
+    public void btnDataLoad()
+    {
+        GameObject temp;
+        temp = GameObject.Find("dont");
+        temp.GetComponent<dont>().isLoad = true;
+
+        SceneManager.LoadScene(2);
+    }
+
     void getValue()
     {
         netManager = GameObject.Find("Network");

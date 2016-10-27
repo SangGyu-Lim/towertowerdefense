@@ -128,20 +128,42 @@ public class buildManager : MonoBehaviour
 				checkState ();
 		}
         // 터치 입력
-		else {
+        else if (goDont.GetComponent<dont>().isSave)
+        {
+            if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_TOWER)
+            {
+                goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eSAVE_MONSTER;
+                netManager.gameObject.GetComponent<Network>().currentState = 0;
+            }
+            else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_TOWER)
+            {
+                buildTowerSave((int)UIStageManager.eStageState.eSAVE_BUILD_TOWER);
+				netManager.gameObject.GetComponent<Network>().currentState = 0;
+            }
 		}
+        else if (goDont.GetComponent<dont>().isLoad)
+        {
+			if (goStageManager.GetComponent<UIStageManager> ().state == UIStageManager.eStageState.eLOAD_TOWER)
+				checkState ();
+			
+			if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_LOAD_TOWER)
+			{
+				buildTowerLoad ();
+				netManager.gameObject.GetComponent<Network>().currentState = 0;
+				goStageManager.GetComponent<UIStageManager> ().state = UIStageManager.eStageState.eLOAD_MONSTER;
+
+			}
+			else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_TOWER)
+			{
+				netManager.gameObject.GetComponent<Network>().currentState = 0;
+				netManager.SendMessage("loadBuildTower", (int)UIStageManager.eStageState.eLOAD_TOWER);
+
+			}
+        }
        
-		/*
-        if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_TOWER)
-        {
-            goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eSAVE_MONSTER;
-            netManager.gameObject.GetComponent<Network>().currentState = 0;
-        }
-        else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_TOWER)
-        {
-            buildTowerSave((int)UIStageManager.eStageState.eSAVE_BUILD_TOWER);
-        }
-*/
+		
+        
+
     }
 
     /* test
@@ -253,6 +275,8 @@ public class buildManager : MonoBehaviour
 
             case UIStageManager.eStageState.eSAVE_BUILD_TOWER:
                 {
+				goDont.GetComponent<dont> ().isSave = true;
+				
                     buildTowerSave((int)UIStageManager.eStageState.eSAVE_BUILD_TOWER);
 
                 } break;
@@ -262,6 +286,12 @@ public class buildManager : MonoBehaviour
 
 
                 } break;
+
+		case UIStageManager.eStageState.eLOAD_TOWER:
+			{
+				netManager.SendMessage("loadBuildTower", (int)UIStageManager.eStageState.eLOAD_TOWER);
+
+			} break;
 
         }
 
@@ -388,6 +418,25 @@ public class buildManager : MonoBehaviour
 
     void buildTowerLoad()
     {
+		int tempIndex = 0;
+		string saveStr = netManager.gameObject.GetComponent<Network>().tower;
+		string[] dataTexts = saveStr.Split(';');
+
+		for (int i = 0; i < boxCount; ++i)
+		{
+			string[] dataText = dataTexts [tempIndex].Split (',');
+
+			if (dataText [0] == null)
+				break;
+
+			if (int.Parse (dataText [0]) == i) {
+				goTargetObject = GameObject.Find ("box_" + dataText [0]);
+				buildTower (int.Parse (dataText [1]));
+				++tempIndex;
+			}
+
+
+		}
 
     }
 

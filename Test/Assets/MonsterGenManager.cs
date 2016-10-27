@@ -106,22 +106,50 @@ public class MonsterGenManager : MonoBehaviour
 			// 상태 체크
 			if (goStageManager.GetComponent<UIStageManager> ().state != UIStageManager.eStageState.eNONE)
 				checkState ();
-		} else {
-			
 		}
+        else if (goDont.GetComponent<dont>().isSave)
+        {
+			if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_MONSTER) {
+				scoreStageSave ((int)UIStageManager.eStageState.eSAVE_SCORE_STAGE);
+				netManager.gameObject.GetComponent<Network> ().currentState = 0;
+			} else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eERROR_SAVE_MONSTER) {
+				MonsterSave ((int)UIStageManager.eStageState.eSAVE_MONSTER);
+				netManager.gameObject.GetComponent<Network> ().currentState = 0;
+			} else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_SCORE_STAGE) {
+				goDont.GetComponent<dont> ().isSave = false;
+			} else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eERROR_SAVE_SCORE_STAGE) {
+				scoreStageSave ((int)UIStageManager.eStageState.eSAVE_SCORE_STAGE);
+				netManager.gameObject.GetComponent<Network> ().currentState = 0;
+			}
+		}
+        else if (goDont.GetComponent<dont>().isLoad)
+        {
+			if (goStageManager.GetComponent<UIStageManager> ().state == UIStageManager.eStageState.eLOAD_MONSTER)
+				checkState ();
+
+			if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eSUCCESS_LOAD_MONSTER) {
+				MonsterLoad ();
+				netManager.gameObject.GetComponent<Network> ().currentState = 0;
+				netManager.SendMessage("loadScoreStage", (int)UIStageManager.eStageState.eLOAD_SCORE_STAGE);
+			} 
+			else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eERROR_LOAD_MONSTER) {
+				netManager.gameObject.GetComponent<Network> ().currentState = 0;
+				netManager.SendMessage("loadMonster", (int)UIStageManager.eStageState.eLOAD_MONSTER);
+
+			}
+			else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eSUCCESS_LOAD_SCORE_STAGE) {
+				goDont.GetComponent<dont> ().isLoad = false;
+			}
+			else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network> ().currentState == UIStageManager.eStageState.eERROR_LOAD_SCORE_STAGE) {
+				netManager.gameObject.GetComponent<Network> ().currentState = 0;
+				netManager.SendMessage("loadScoreStage", (int)UIStageManager.eStageState.eLOAD_SCORE_STAGE);
+			}
+        }
         
         //{
             
-		/*
-            if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_MONSTER)
-            {
-                scoreStageSave((int)UIStageManager.eStageState.eSAVE_SCORE_STAGE);
-                netManager.gameObject.GetComponent<Network>().currentState = 0;
-            }
-            else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_MONSTER)
-            {
-                MonsterSave((int)UIStageManager.eStageState.eSAVE_MONSTER);
-            }*/
+
+            
        
 
 
@@ -337,6 +365,11 @@ public class MonsterGenManager : MonoBehaviour
                     
                 } break;
 
+		case UIStageManager.eStageState.eLOAD_MONSTER:
+			{
+				netManager.SendMessage("loadMonster", (int)UIStageManager.eStageState.eLOAD_MONSTER);
+			} break;
+
 
         }
         
@@ -346,8 +379,9 @@ public class MonsterGenManager : MonoBehaviour
     void MonsterSave(int state)
     {
 
-        string[] saveStr;
+        string[] saveStr, saveStr2;
         saveStr = new string[10];
+		saveStr2 = new string[10];
 
         for (int i = 0; i < maxMonsterNum; ++i)
         {
@@ -358,8 +392,10 @@ public class MonsterGenManager : MonoBehaviour
 
 			int x = (int)allMonster[i].transform.position.x;
 			int z = (int)allMonster[i].transform.position.z;
+			int hp = allMonster [i].GetComponent<Monster> ().monsterHp;
 
-			saveStr[int.Parse(dataTexts[1]) - 1] += (x.ToString() + "," + z.ToString() + ";");
+			saveStr[int.Parse(dataTexts[1]) - 1] += (x.ToString() + "," + z.ToString() + "," + allMonster [i].GetComponent<Monster> ().currentMonsterMoveState.ToString() + ";");
+			saveStr2[int.Parse(dataTexts[1]) - 1] += (hp.ToString() + ";");
         }
 
         for (int i = 0; i < 10; ++i)
@@ -371,6 +407,38 @@ public class MonsterGenManager : MonoBehaviour
         netManager.SendMessage("saveMonster", state);
 
     }
+
+	void MonsterLoad()
+	{
+
+		string[] saveStr, saveStr2;
+		saveStr = new string[10];
+		saveStr2 = new string[10];
+
+		for (int i = 0; i < maxMonsterNum; ++i)
+		{
+			if (allMonster[i] == null)
+				continue;
+
+			string[] dataTexts = allMonster[i].name.Split('_');
+
+			int x = (int)allMonster[i].transform.position.x;
+			int z = (int)allMonster[i].transform.position.z;
+			int hp = allMonster [i].GetComponent<Monster> ().monsterHp;
+
+			saveStr[int.Parse(dataTexts[1]) - 1] += (x.ToString() + "," + z.ToString() + "," + allMonster [i].GetComponent<Monster> ().currentMonsterMoveState.ToString() + ";");
+			saveStr2[int.Parse(dataTexts[1]) - 1] += (hp.ToString() + ";");
+		}
+
+		for (int i = 0; i < 10; ++i)
+		{
+			netManager.gameObject.GetComponent<Network>().monster[i] = saveStr[i];
+		}
+
+
+		//netManager.SendMessage("saveMonster", state);
+
+	}
 
     void gameover()
     {
@@ -401,11 +469,11 @@ public class MonsterGenManager : MonoBehaviour
         if (netManager.gameObject.GetComponent<Network>().bestScore < goStageManager.GetComponent<UIStageManager>().score)
         {
             netManager.gameObject.GetComponent<Network>().bestScore = goStageManager.GetComponent<UIStageManager>().score;
-            netManager.SendMessage("saveScoreStage", state);
+            
         }
         
-            
-
+		netManager.gameObject.GetComponent<Network>().gold = goStageManager.GetComponent<UIStageManager>().gold; 
+		netManager.SendMessage("saveScoreStage", state);
         
 
     }

@@ -14,12 +14,14 @@ public class UIStageManager : MonoBehaviour {
         eLOAD_TOWER = 7,
         eLOAD_MONSTER = 8,
         eSAVE_SCORE_STAGE = 9,
+		eLOAD_SCORE_STAGE = 10,
 
         eSUCCESS_SAVE_TOWER = 15,
         eSUCCESS_SAVE_MONSTER = 16,
         eSUCCESS_LOAD_TOWER = 17,
         eSUCCESS_LOAD_MONSTER = 18,
         eSUCCESS_SAVE_SCORE_STAGE = 19,
+		eSUCCESS_LOAD_SCORE_STAGE = 20,
 
         eBUILD_TOWER0 = 21,
         eBUILD_TOWER1 = 22,
@@ -39,6 +41,7 @@ public class UIStageManager : MonoBehaviour {
         eERROR_LOAD_TOWER = 1007,
         eERROR_LOAD_MONSTER = 1008,
         eERROR_SAVE_SCORE_STAGE = 1009,
+		eERROR_LOAD_SCORE_STAGE = 1010,
 
     }
 
@@ -55,10 +58,16 @@ public class UIStageManager : MonoBehaviour {
 
     public eStageState state = eStageState.eNONE;
 
+	GameObject goDont;
+
 	// Use this for initialization
 	void Start () {
         gold = 100;
         
+		goDont = GameObject.Find("dont");
+		if (goDont.GetComponent<dont> ().isLoad) {
+			load ();
+		}
 	}
 	
 	// Update is called once per frame
@@ -127,6 +136,7 @@ public class UIStageManager : MonoBehaviour {
 
 	public void saveBtn()
 	{
+		
         state = eStageState.eSAVE_BUILD_TOWER;
 	}
 
@@ -148,4 +158,9 @@ public class UIStageManager : MonoBehaviour {
         goldLabel.text = "gold : " + gold.ToString();
         monsterCountLabel.text = "monster count : " + monsterCount.ToString() + " / 80";
     }
+
+	void load()
+	{
+		state = eStageState.eLOAD_TOWER;
+	}
 }
