@@ -48,21 +48,21 @@ public class tower : MonoBehaviour
         if (fTickTime >= speed)
         {
             fTickTime = 0.0f;
-            /*
+            
             if (!isAtk)
             {
                 
-                if ()
-                {
-                    isAtk = true;*/
+               // if ()
+                //{
+                    isAtk = true;
 					atkMonster ();
-                /*}
+                //}
             }
             else
             {
                 checkOutRange();
                 
-            }*/
+            }
         }
         watchTarget();
 		
@@ -98,7 +98,7 @@ public class tower : MonoBehaviour
 			if (targetMonster.GetComponent<MonsterGenManager> ().allMonster [i] == null)
 				continue;
 
-			if (targetMonster.GetComponent<MonsterGenManager> ().allMonster [i].GetComponent<Monster> ().monsterLife != Monster.eMonsterLiveState.eALIVE)
+			if (targetMonster.GetComponent<MonsterGenManager> ().allMonster [i].GetComponent<Monster> ().monsterHp <= 0)
 				continue;
 
             if (Vector3.Distance(this.transform.position, targetMonster.GetComponent<MonsterGenManager>().allMonster[i].transform.position) > range)
@@ -117,6 +117,8 @@ public class tower : MonoBehaviour
     {
 		if (Vector3.Distance (this.transform.position, targetMonster.GetComponent<MonsterGenManager> ().allMonster [targetNum].transform.position) > range) {
 			isAtk = false;
+		} else if (targetMonster.GetComponent<MonsterGenManager> ().allMonster [targetNum].GetComponent<Monster> ().monsterHp <= 0) {
+			isAtk = false;
 		}
 		else
 		{
@@ -128,11 +130,16 @@ public class tower : MonoBehaviour
     {
 
         targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp -= atk;
+
+		if (targetMonster.GetComponent<MonsterGenManager> ().allMonster [targetNum].GetComponent<Monster> ().monsterHp <= 0) {
+			targetMonster.GetComponent<MonsterGenManager> ().allMonster [targetNum].GetComponent<Monster> ().monsterLife = Monster.eMonsterLiveState.eDIE;
+			isAtk = false;
+		}
+
         StartCoroutine(atkEffect());
 
 
-        if (targetMonster.GetComponent<MonsterGenManager>().allMonster[targetNum].GetComponent<Monster>().monsterHp <= 0)
-            isAtk = false;
+
 
         
     }

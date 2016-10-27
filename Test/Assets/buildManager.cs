@@ -132,7 +132,7 @@ public class buildManager : MonoBehaviour
         // 상태 체크
         if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
             checkState();
-
+		/*
         if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_TOWER)
         {
             goStageManager.GetComponent<UIStageManager>().state = UIStageManager.eStageState.eSAVE_MONSTER;
@@ -142,7 +142,7 @@ public class buildManager : MonoBehaviour
         {
             buildTowerSave((int)UIStageManager.eStageState.eSAVE_BUILD_TOWER);
         }
-
+*/
     }
 
     /* test

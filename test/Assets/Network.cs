@@ -39,7 +39,7 @@ public class Network : MonoBehaviour {
     }
 
     // 필요에 따라 url을 수정한다.
-	string url = "http://210.107.231.38/connect.php";
+	string url = "http://192.168.0.129/connect.php";
 
     eNetworkState eCurrentState = eNetworkState.eNONE;
     public int currentState { get { return (int)eCurrentState; } set { eCurrentState = eNetworkState.eNONE; } }

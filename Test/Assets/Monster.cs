@@ -41,6 +41,8 @@ public class Monster : MonoBehaviour
     public int monsterGold;
     Animator anim;
 
+	public GameObject goStageManager;
+
     // Use this for initialization
     void Start()
     {
@@ -54,20 +56,35 @@ public class Monster : MonoBehaviour
     void Update()
     {
         //checkIsDead();
-        Vector3 moveDir = new Vector3(arrayObject[(int)currentMonsterMoveState].transform.position.x, arrayObject[(int)currentMonsterMoveState].transform.position.y);
-        transform.position = Vector3.MoveTowards(transform.position, arrayObject[(int)currentMonsterMoveState].transform.position, speed * Time.deltaTime);
+		if (monsterLife == eMonsterLiveState.eALIVE) {
+			Vector3 moveDir = new Vector3(arrayObject[(int)currentMonsterMoveState].transform.position.x, arrayObject[(int)currentMonsterMoveState].transform.position.y);
+			transform.position = Vector3.MoveTowards(transform.position, arrayObject[(int)currentMonsterMoveState].transform.position, speed * Time.deltaTime);
 
-        if (currentMonsterMoveState > STATE.POINT1)
-        {
-            Vector3 dir = arrayObject[(int)currentMonsterMoveState].transform.position - transform.position;
-            Vector3 dirXZ = new Vector3(dir.x, 0.0f, dir.y);
-            Quaternion targetRot = Quaternion.LookRotation(dirXZ);
-            Quaternion monsterRot = Quaternion.RotateTowards(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
-            transform.rotation = monsterRot;
-        }
+			if (currentMonsterMoveState > STATE.POINT1)
+			{
+				Vector3 dir = arrayObject[(int)currentMonsterMoveState].transform.position - transform.position;
+				Vector3 dirXZ = new Vector3(dir.x, 0.0f, dir.y);
+				Quaternion targetRot = Quaternion.LookRotation(dirXZ);
+				Quaternion monsterRot = Quaternion.RotateTowards(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+				transform.rotation = monsterRot;
+			}
 
-        UpdateState();
-        Debug.LogError(monsterHp);
+			UpdateState();
+			Debug.LogError(monsterHp);
+		}
+		else if(monsterLife == eMonsterLiveState.eDIE)
+		{
+			GameObject temp;
+			temp = GameObject.Find ("MonsterGenManager");
+			temp.GetComponent<MonsterGenManager>().changeMonseterCount(false, -1);
+				
+			goStageManager.GetComponent<UIStageManager>().gold += monsterGold;
+			goStageManager.GetComponent<UIStageManager>().score += 10;
+			//goStageManager.GetComponent<UIStageManager>().changeMainPanel();
+			monsterLife = eMonsterLiveState.eDESTROY;
+			die ();
+		}
+        
     }
 
     void UpdateState()
@@ -105,17 +122,51 @@ public class Monster : MonoBehaviour
         if (transform.position.x == arrayObject[15].transform.position.x && transform.position.z == arrayObject[15].transform.position.z)
             currentMonsterMoveState = STATE.POINT1;
     }
+	public void die()
+	{
+	//	StartCoroutine (dieAnimation());
+		Destroy(this.gameObject);
+	}
 
 	public IEnumerator dieAnimation()
     {
-		anim.SetInteger ("animation", 12);
+		//anim.SetInteger ("animation", 12);
+		anim.Play("animation", 12);
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
     }
+
+
 
 	public void setMonsterLife(eMonsterLiveState state)
 	{
 		monsterLife = state;
 	}
-   
+
+
+   /*
+	void checkDieMonster()
+	{
+		for (int i = 0; i < currentMonsterNum; ++i)
+		{
+			if (allMonster [i] == null)
+				continue;
+			else if (allMonster [i].GetComponent<Monster> ().monsterHp <= 0)
+			{
+
+				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDIE);
+				StartCoroutine (allMonster [i].GetComponent<Monster> ().dieAnimation ());
+
+				goStageManager.GetComponent<UIStageManager>().gold += allMonster[i].GetComponent<Monster>().monsterGold;
+				goStageManager.GetComponent<UIStageManager>().score += 10;
+				//goStageManager.GetComponent<UIStageManager>().changeMainPanel();
+
+				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDESTROY);
+				Destroy (allMonster [i]);
+				changeMonseterCount(false, -1);
+				//break;
+			}
+
+		}
+	}*/
 }

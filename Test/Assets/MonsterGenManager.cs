@@ -57,6 +57,8 @@ public class MonsterGenManager : MonoBehaviour
 
     public UILabel gameoverLabel;
 
+	//int i = 0;
+
     GameObject netManager;   
     // Use this for initialization
     void Start()
@@ -79,6 +81,8 @@ public class MonsterGenManager : MonoBehaviour
         
         //{
             fTickTime += Time.deltaTime;
+		//checkDieMonster();
+
             if (fTickTime >= fDestroyTime)
             {
                 fTickTime = 0.0f;
@@ -97,7 +101,7 @@ public class MonsterGenManager : MonoBehaviour
                     Debug.Log("GameOver");
             }
 
-            checkDieMonster();
+            
 
             if (currentMonsterNum > gameoverMonsterNum)
                 gameover();
@@ -105,7 +109,7 @@ public class MonsterGenManager : MonoBehaviour
             // 상태 체크
             if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
                 checkState();
-
+		/*
             if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_MONSTER)
             {
                 scoreStageSave((int)UIStageManager.eStageState.eSAVE_SCORE_STAGE);
@@ -114,7 +118,7 @@ public class MonsterGenManager : MonoBehaviour
             else if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eERROR_SAVE_MONSTER)
             {
                 MonsterSave((int)UIStageManager.eStageState.eSAVE_MONSTER);
-            }
+            }*/
         /*
         }
         else
@@ -224,7 +228,7 @@ public class MonsterGenManager : MonoBehaviour
         }
     }
 
-    void changeMonseterCount(bool isWave, int changeValue)
+    public void changeMonseterCount(bool isWave, int changeValue)
     {
         //Debug.Log(currentWaveMonsterNum + " / " + currentMonsterNum);
 
@@ -282,11 +286,14 @@ public class MonsterGenManager : MonoBehaviour
 		{
 			if (allMonster [i] == null)
 				continue;
+			else if (i >= monsterIndex)
+				break;			
 			else if (allMonster [i].GetComponent<Monster> ().monsterHp <= 0)
 			{
                 
 				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDIE);
-				StartCoroutine (allMonster [i].GetComponent<Monster> ().dieAnimation ());
+				allMonster [i].GetComponent<Monster> ().die ();
+//				StartCoroutine (allMonster [i].GetComponent<Monster> ().dieAnimation ());
 
                 goStageManager.GetComponent<UIStageManager>().gold += allMonster[i].GetComponent<Monster>().monsterGold;
                 goStageManager.GetComponent<UIStageManager>().score += 10;
@@ -295,8 +302,10 @@ public class MonsterGenManager : MonoBehaviour
 				allMonster [i].GetComponent<Monster> ().setMonsterLife (Monster.eMonsterLiveState.eDESTROY);
 				Destroy (allMonster [i]);
 				changeMonseterCount(false, -1);
-				//break;
+				break;
 			}
+
+
 					
 		}
 	}

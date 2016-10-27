@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class dont : Singleton<dont> {
+public class dont : MonoBehaviour {
 
     public int trickScore = 100;
 
