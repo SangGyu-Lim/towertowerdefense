@@ -17,6 +17,7 @@ public class buildManager : MonoBehaviour
     public GameObject goStageManager;
     GameObject goTargetObject;
     GameObject netManager;        
+	GameObject goDont;
 
     const int towerSize = 1;
     const int boxCount = 46;
@@ -74,6 +75,7 @@ public class buildManager : MonoBehaviour
         Debug.Log("buildManager start");
 
         netManager = GameObject.Find("Network");
+		goDont = GameObject.Find("dont");
 
         /* test
         towerList = new GameObject[count];
@@ -85,53 +87,50 @@ public class buildManager : MonoBehaviour
     void Update()
     {
 
+		if (!goDont.GetComponent<dont> ().isSave && !goDont.GetComponent<dont> ().isLoad) {
+			ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+
+
+			if (Input.GetMouseButtonDown (0)) {
+				if (Physics.Raycast (ray, out hitInfo)) {
+					Debug.Log (hitInfo.transform.gameObject.name);
+
+					string[] dataTexts = hitInfo.transform.gameObject.name.Split ('_');
+
+					foreach (string dataText in dataTexts) {
+						Debug.Log (dataText);
+
+						if (!isTowerPanel && !isDestroyPanel) {
+							if (dataText == "box" && !isBuild [int.Parse (dataTexts [1])]) {
+								isTowerPanel = true;
+
+								goStageManager.GetComponent<UIStageManager> ().goTowerPanel.SetActive (true);
+								goTargetObject = GameObject.Find (hitInfo.transform.gameObject.name);
+								break;
+							} else if (dataText == "clone" && isBuild [int.Parse (dataTexts [2])]) {
+								isDestroyPanel = true;
+
+								goStageManager.GetComponent<UIStageManager> ().goDestroyPanel.SetActive (true);
+								goTargetObject = GameObject.Find (hitInfo.transform.gameObject.name);
+								break;
+							}
+						}
+					}
+
+					//Debug.Log();
+				}
+
+
+			}
+
+			// 상태 체크
+			if (goStageManager.GetComponent<UIStageManager> ().state != UIStageManager.eStageState.eNONE)
+				checkState ();
+		}
         // 터치 입력
-
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (Physics.Raycast(ray, out hitInfo))
-            {
-                Debug.Log(hitInfo.transform.gameObject.name);
-
-                string[] dataTexts = hitInfo.transform.gameObject.name.Split('_');
-
-                foreach (string dataText in dataTexts)
-                {
-                    Debug.Log(dataText);
-
-                    if (!isTowerPanel && !isDestroyPanel)
-                    {
-                        if (dataText == "box" && !isBuild[int.Parse(dataTexts[1])])
-                        {
-                            isTowerPanel = true;
-                                                        
-                            goStageManager.GetComponent<UIStageManager>().goTowerPanel.SetActive(true);
-                            goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
-                            break;
-                        }
-                        else if (dataText == "clone" && isBuild[int.Parse(dataTexts[2])])
-                        {
-                            isDestroyPanel = true;
-
-                            goStageManager.GetComponent<UIStageManager>().goDestroyPanel.SetActive(true);
-                            goTargetObject = GameObject.Find(hitInfo.transform.gameObject.name);
-                            break;
-                        }
-                    }
-                }
-
-                //Debug.Log();
-            }
-
-
-        }
-
-        // 상태 체크
-        if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
-            checkState();
+		else {
+		}
+       
 		/*
         if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_TOWER)
         {

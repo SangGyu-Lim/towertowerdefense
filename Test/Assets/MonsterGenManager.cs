@@ -57,6 +57,7 @@ public class MonsterGenManager : MonoBehaviour
 
     public UILabel gameoverLabel;
 
+	public GameObject goDont;
 	//int i = 0;
 
     GameObject netManager;   
@@ -72,43 +73,45 @@ public class MonsterGenManager : MonoBehaviour
         maxMonsterCount = maxMonsterNum;
 
         netManager = GameObject.Find("Network");
+		goDont = GameObject.Find("dont");
 
     }
 
     // Update is called once per frame
     void Update()
     {
+		if (!goDont.GetComponent<dont> ().isSave && !goDont.GetComponent<dont> ().isLoad) {
+			fTickTime += Time.deltaTime;
+			//checkDieMonster();
+
+			if (fTickTime >= fDestroyTime) {
+				fTickTime = 0.0f;
+
+				if (currentMonsterNum < maxMonsterNum) {
+					if (currentWaveMonsterNum == maxWaveMonsterNum) {
+						currentWaveMonsterNum = 0;
+						changeState ();
+					}
+
+					generateMonster ();
+				} else
+					Debug.Log ("GameOver");
+			}
+
+
+
+			if (currentMonsterNum > gameoverMonsterNum)
+				gameover ();
+
+			// 상태 체크
+			if (goStageManager.GetComponent<UIStageManager> ().state != UIStageManager.eStageState.eNONE)
+				checkState ();
+		} else {
+			
+		}
         
         //{
-            fTickTime += Time.deltaTime;
-		//checkDieMonster();
-
-            if (fTickTime >= fDestroyTime)
-            {
-                fTickTime = 0.0f;
-
-                if (currentMonsterNum < maxMonsterNum)
-                {
-                    if (currentWaveMonsterNum == maxWaveMonsterNum)
-                    {
-                        currentWaveMonsterNum = 0;
-                        changeState();
-                    }
-
-                    generateMonster();
-                }
-                else
-                    Debug.Log("GameOver");
-            }
-
             
-
-            if (currentMonsterNum > gameoverMonsterNum)
-                gameover();
-
-            // 상태 체크
-            if (goStageManager.GetComponent<UIStageManager>().state != UIStageManager.eStageState.eNONE)
-                checkState();
 		/*
             if ((UIStageManager.eStageState)netManager.gameObject.GetComponent<Network>().currentState == UIStageManager.eStageState.eSUCCESS_SAVE_MONSTER)
             {
@@ -119,7 +122,11 @@ public class MonsterGenManager : MonoBehaviour
             {
                 MonsterSave((int)UIStageManager.eStageState.eSAVE_MONSTER);
             }*/
-        /*
+       
+
+
+
+		/*
         }
         else
         {

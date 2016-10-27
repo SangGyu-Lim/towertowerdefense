@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class dont : MonoBehaviour {
 
+	public bool isSave = false;
+	public bool isLoad = false;
     public int trickScore = 100;
 
     void Awake()
